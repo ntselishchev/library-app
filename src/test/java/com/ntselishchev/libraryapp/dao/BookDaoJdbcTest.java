@@ -7,13 +7,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
 @JdbcTest
 @Import(BookDaoJdbc.class)
-@Sql({"/db/schema.sql", "/db/import_book_dao_test.sql"})
 public class BookDaoJdbcTest extends LibraryAppApplicationTests {
 
     @Autowired
