@@ -6,15 +6,15 @@ import java.util.List;
 
 public interface BookDao {
 
-    Book findOneByTitleAndAuthorIdAndGenreId(String title, int authorId, int genreId);
+    Book findOneByTitleAndAuthorIdAndGenreId(String title, long authorId, long genreId);
 
-    Book findOneById(int id);
+    Book findOneById(long id);
 
-    void deleteById(int id);
+    void deleteById(long id);
 
-    void update(int id, String title, int authorId, int genreId);
+    void update(long id, String title, long authorId, long genreId);
 
-    void saveOne(String title, int authorId, int genreId);
+    void saveOne(String title, long authorId, long genreId);
 
     List<Book> findAll();
 }

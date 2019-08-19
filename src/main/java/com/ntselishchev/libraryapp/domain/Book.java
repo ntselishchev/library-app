@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Book {
 
-    private int id;
+    private long id;
     private String title;
     private Author author;
     private Genre genre;

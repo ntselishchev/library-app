@@ -6,6 +6,6 @@ public interface InOutService {
 
     String getUserInputMessage();
 
-    int getUserIntInputMessage();
+    long getUserIntInputMessage();
 
 }

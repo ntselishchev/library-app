@@ -36,11 +36,11 @@ public class LibraryService {
 
         inOutService.print("Select author-id from authors below:");
         List<Author> authorList = getAuthors();
-        int authorId = inOutService.getUserIntInputMessage();
+        long authorId = inOutService.getUserIntInputMessage();
 
         inOutService.print("Select genre-id from authors below:");
         List<Genre> genreList = getGenres();
-        int genreId = inOutService.getUserIntInputMessage();
+        long genreId = inOutService.getUserIntInputMessage();
 
         boolean authorIdInRange = authorList.stream().map(Author::getId).collect(Collectors.toList()).contains(authorId);
         boolean genreIdInRange = genreList.stream().map(Genre::getId).collect(Collectors.toList()).contains(genreId);
@@ -58,7 +58,7 @@ public class LibraryService {
         }
     }
 
-    public void addBook(String title, int authorId, int genreId) {
+    private void addBook(String title, long authorId, long genreId) {
         bookDao.saveOne(title, authorId, genreId);
         inOutService.print(BOOK_SAVED_MSG);
     }
@@ -81,7 +81,7 @@ public class LibraryService {
             return;
         }
 
-        int id = inOutService.getUserIntInputMessage();
+        long id = inOutService.getUserIntInputMessage();
 
         Book existingBook = bookDao.findOneById(id);
         if (existingBook == null) {
@@ -100,7 +100,7 @@ public class LibraryService {
             return;
         }
 
-        int id = inOutService.getUserIntInputMessage();
+        long id = inOutService.getUserIntInputMessage();
 
         Book existingBook = bookDao.findOneById(id);
 
@@ -112,11 +112,11 @@ public class LibraryService {
 
             inOutService.print("Select new author-id from authors below:");
             List<Author> authorList = getAuthors();
-            int authorId = inOutService.getUserIntInputMessage();
+            long authorId = inOutService.getUserIntInputMessage();
 
             inOutService.print("Select new genre-id from authors below:");
             List<Genre> genreList = getGenres();
-            int genreId = inOutService.getUserIntInputMessage();
+            long genreId = inOutService.getUserIntInputMessage();
 
             boolean authorIdInRange = authorList.stream().map(Author::getId).collect(Collectors.toList()).contains(authorId);
             boolean genreIdInRange = genreList.stream().map(Genre::getId).collect(Collectors.toList()).contains(genreId);

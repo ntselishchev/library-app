@@ -21,9 +21,9 @@ public class InOutServiceImpl implements InOutService {
         return scanner.nextLine().trim();
     }
 
-    public int getUserIntInputMessage() {
+    public long getUserIntInputMessage() {
         try {
-            return Integer.valueOf(scanner.nextLine());
+            return Long.valueOf(scanner.nextLine());
         } catch (NumberFormatException e) {
             print("Not a number");
         }

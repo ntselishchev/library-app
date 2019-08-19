@@ -17,95 +17,104 @@ public class BookDaoJdbc implements BookDao {
 
     private final NamedParameterJdbcOperations jdbc;
 
-    private static final String SELECT_MAIN_QUERY =
-            "select b.*, " +
-            "a.name as author_name, " +
-            "g.title as genre_title " +
-            "from books b " +
-            "left join authors a on a.id = b.author_id " +
-            "left join genres g on g.id = b.genre_id ";
-
-    private static final String FIND_ONE_BY_TITLE_AND_IDS_QUERY =
-            "where b.title = :title " +
-            "and author_id = :authorId " +
-            "and genre_id = :genreId " +
-            "limit 1";
-
-    private static final String FIND_ONE_BY_ID_QUERY =
-            "where b.id = :id " +
-            "limit 1";
-
-    private static final String INSERT_QUERY =
-            "insert into books (title, author_id, genre_id) " +
-            "values (:title, :authorId, :genreId)";
-
-    private static final String DELETE_QUERY =
-            "delete from books where id = :id";
-
-    private static final String UPDATE_QUERY =
-            "update books " +
-            "set " +
-            "title = :title, " +
-            "author_id = :authorId, " +
-            "genre_id = :genreId " +
-            "where id = :id";
+    private static final String BOOK_ID = "id";
+    private static final String AUTHOR_ID = "authorId";
+    private static final String GENRE_ID = "genreId";
+    private static final String BOOK_TITLE = "title";
 
     @Override
-    public Book findOneByTitleAndAuthorIdAndGenreId(String title, int authorId, int genreId) {
+    public Book findOneByTitleAndAuthorIdAndGenreId(String title, long authorId, long genreId) {
         final Map<String, Object> params = new HashMap<>();
-        params.put("title", title);
-        params.put("authorId", authorId);
-        params.put("genreId", genreId);
+        params.put(BOOK_TITLE, title);
+        params.put(AUTHOR_ID, authorId);
+        params.put(GENRE_ID, genreId);
         try {
-            return jdbc.queryForObject(SELECT_MAIN_QUERY + FIND_ONE_BY_TITLE_AND_IDS_QUERY, params, new BookMapper());
+            return jdbc.queryForObject(
+                    "select b.*, " +
+                    "a.name as author_name, " +
+                    "g.title as genre_title " +
+                    "from books b " +
+                    "left join authors a on a.id = b.author_id " +
+                    "left join genres g on g.id = b.genre_id " +
+                    "where b.title = :title " +
+                    "and author_id = :authorId " +
+                    "and genre_id = :genreId " +
+                    "limit 1"
+                    , params, new BookMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
     }
 
     @Override
-    public Book findOneById(int id) {
+    public Book findOneById(long id) {
         final Map<String, Object> params = new HashMap<>();
-        params.put("id", id);
+        params.put(BOOK_ID, id);
         try {
-            return jdbc.queryForObject(SELECT_MAIN_QUERY + FIND_ONE_BY_ID_QUERY, params, new BookMapper());
+            return jdbc.queryForObject(
+                    "select b.*, " +
+                    "a.name as author_name, " +
+                    "g.title as genre_title " +
+                    "from books b " +
+                    "left join authors a on a.id = b.author_id " +
+                    "left join genres g on g.id = b.genre_id " +
+                    "where b.id = :id " +
+                    "limit 1"
+                    , params, new BookMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
     }
 
     @Override
-    public void deleteById(int id) {
+    public void deleteById(long id) {
         final Map<String, Object> params = new HashMap<>();
-        params.put("id", id);
-        jdbc.update(DELETE_QUERY, params);
+        params.put(BOOK_ID, id);
+        jdbc.update("delete from books where id = :id", params);
     }
 
     @Override
-    public void update(int id, String title, int authorId, int genreId) {
+    public void update(long id, String title, long authorId, long genreId) {
         final Map<String, Object> params = new HashMap<>();
-        params.put("id", id);
-        params.put("title", title);
-        params.put("authorId", authorId);
-        params.put("genreId", genreId);
+        params.put(BOOK_ID, id);
+        params.put(BOOK_TITLE, title);
+        params.put(AUTHOR_ID, authorId);
+        params.put(GENRE_ID, genreId);
 
-        jdbc.update(UPDATE_QUERY, params);
+        jdbc.update(
+                "update books " +
+                "set " +
+                "title = :title, " +
+                "author_id = :authorId, " +
+                "genre_id = :genreId " +
+                "where id = :id"
+                , params);
     }
 
     @Override
-    public void saveOne(String title, int authorId, int genreId) {
+    public void saveOne(String title, long authorId, long genreId) {
         final Map<String, Object> params = new HashMap<>();
-        params.put("title", title);
-        params.put("authorId", authorId);
-        params.put("genreId", genreId);
+        params.put(BOOK_TITLE, title);
+        params.put(AUTHOR_ID, authorId);
+        params.put(GENRE_ID, genreId);
 
-        jdbc.update(INSERT_QUERY, params);
+        jdbc.update(
+                "insert into books (title, author_id, genre_id) " +
+                "values (:title, :authorId, :genreId)"
+                , params);
     }
 
     @Override
     public List<Book> findAll() {
         try {
-            return jdbc.query(SELECT_MAIN_QUERY, new BookMapper());
+            return jdbc.query(
+                    "select b.*, " +
+                    "a.name as author_name, " +
+                    "g.title as genre_title " +
+                    "from books b " +
+                    "left join authors a on a.id = b.author_id " +
+                    "left join genres g on g.id = b.genre_id "
+                    , new BookMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
