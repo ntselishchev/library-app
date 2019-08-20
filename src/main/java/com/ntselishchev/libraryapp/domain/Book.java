@@ -14,4 +14,7 @@ public class Book {
     private Author author;
     private Genre genre;
 
+    public boolean hasSameParams(String title, long authorId, long genreId) {
+        return this.title.equals(title) && author.getId() == authorId && genre.getId() == genreId;
+    }
 }

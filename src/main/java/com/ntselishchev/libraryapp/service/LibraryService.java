@@ -96,43 +96,42 @@ public class LibraryService {
         inOutService.print("Type book-id to update from book list below:");
         List<Book> bookList = getBooks();
 
-        if (bookList.isEmpty()) {
+        if (!bookList.isEmpty()) {
+            long id = inOutService.getUserIntInputMessage();
+            Book existingBook = bookDao.findOneById(id);
+
+            if (existingBook == null) {
+                inOutService.print(BOOK_DOES_NOT_EXIST_MSG);
+            } else {
+                processUpdateExistingBook(existingBook);
+            }
+        }
+    }
+
+    private void processUpdateExistingBook(Book existingBook) {
+        inOutService.print("Type new book title");
+        String title = inOutService.getUserInputMessage();
+
+        inOutService.print("Select new author-id from authors below:");
+        List<Author> authorList = getAuthors();
+        long authorId = inOutService.getUserIntInputMessage();
+
+        inOutService.print("Select new genre-id from authors below:");
+        List<Genre> genreList = getGenres();
+        long genreId = inOutService.getUserIntInputMessage();
+
+        boolean authorIdInRange = authorList.stream().map(Author::getId).collect(Collectors.toList()).contains(authorId);
+        boolean genreIdInRange = genreList.stream().map(Genre::getId).collect(Collectors.toList()).contains(genreId);
+
+        if (!authorIdInRange || !genreIdInRange) {
+            inOutService.print(AUTHOR_OR_GENRE_DOES_NOT_EXIST_MSG);
             return;
         }
-
-        long id = inOutService.getUserIntInputMessage();
-
-        Book existingBook = bookDao.findOneById(id);
-
-        if (existingBook == null) {
-            inOutService.print(BOOK_DOES_NOT_EXIST_MSG);
+        if (existingBook.hasSameParams(title, authorId, genreId)) {
+            inOutService.print(BOOK_ALREADY_EXISTS_MSG);
         } else {
-            inOutService.print("Type new book title");
-            String title = inOutService.getUserInputMessage();
-
-            inOutService.print("Select new author-id from authors below:");
-            List<Author> authorList = getAuthors();
-            long authorId = inOutService.getUserIntInputMessage();
-
-            inOutService.print("Select new genre-id from authors below:");
-            List<Genre> genreList = getGenres();
-            long genreId = inOutService.getUserIntInputMessage();
-
-            boolean authorIdInRange = authorList.stream().map(Author::getId).collect(Collectors.toList()).contains(authorId);
-            boolean genreIdInRange = genreList.stream().map(Genre::getId).collect(Collectors.toList()).contains(genreId);
-
-            if (!authorIdInRange || !genreIdInRange) {
-                inOutService.print(AUTHOR_OR_GENRE_DOES_NOT_EXIST_MSG);
-                return;
-            }
-            if (existingBook.getTitle().equals(title) ||
-                    existingBook.getAuthor().getId() == authorId ||
-                    existingBook.getGenre().getId() == genreId) {
-                inOutService.print(BOOK_ALREADY_EXISTS_MSG);
-            } else {
-                bookDao.update(existingBook.getId(), title, authorId, genreId);
-                inOutService.print(BOOK_UPDATED_MSG);
-            }
+            bookDao.update(existingBook.getId(), title, authorId, genreId);
+            inOutService.print(BOOK_UPDATED_MSG);
         }
     }
 
