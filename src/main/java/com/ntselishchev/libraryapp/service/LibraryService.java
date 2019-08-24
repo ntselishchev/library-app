@@ -2,15 +2,18 @@ package com.ntselishchev.libraryapp.service;
 
 import com.ntselishchev.libraryapp.dao.AuthorDao;
 import com.ntselishchev.libraryapp.dao.BookDao;
+import com.ntselishchev.libraryapp.dao.CommentDao;
 import com.ntselishchev.libraryapp.dao.GenreDao;
 import com.ntselishchev.libraryapp.domain.Author;
 import com.ntselishchev.libraryapp.domain.Book;
+import com.ntselishchev.libraryapp.domain.Comment;
 import com.ntselishchev.libraryapp.domain.Genre;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +24,7 @@ public class LibraryService {
     private final BookDao bookDao;
     private final AuthorDao authorDao;
     private final GenreDao genreDao;
+    private final CommentDao commentDao;
 
     private static final String BOOK_ALREADY_EXISTS_MSG = "Book having provided parameters already exists";
     private static final String BOOK_SAVED_MSG = "Book has been added";
@@ -29,6 +33,8 @@ public class LibraryService {
     private static final String BOOK_DOES_NOT_EXIST_MSG = "Book having provided id does not exist";
     private static final String AUTHOR_OR_GENRE_DOES_NOT_EXIST_MSG = "Selected author-id or genre-id does not exist";
     private static final String NO_BOOKS_AVAILABLE_MSG = "There are no saved books yet";
+    private static final String NO_BOOK_COMMENTS_AVAILABLE_MSG = "There are no saved comments related to this book yet";
+    private static final String COMMENT_DOES_NOT_EXIST_MSG = "There is no comment having provided id exist";
 
     public void processAddBook() {
         inOutService.print("Type new book title");
@@ -158,5 +164,94 @@ public class LibraryService {
             });
         }
         return bookList;
+    }
+
+    public void addComment() {
+        inOutService.print("Type book-id to leave comment from book list below:");
+        List<Book> bookList = getBooks();
+
+        if (!bookList.isEmpty()) {
+            long id = inOutService.getUserIntInputMessage();
+            Book existingBook = bookDao.findOneById(id);
+
+            if (existingBook == null) {
+                inOutService.print(BOOK_DOES_NOT_EXIST_MSG);
+            } else {
+                processAddCommentToExistingBook(existingBook);
+            }
+        }
+
+    }
+
+    private void processAddCommentToExistingBook(Book existingBook) {
+        inOutService.print("Type your comment");
+        String content = inOutService.getUserInputMessage();
+        Comment comment = new Comment();
+        comment.setContent(content);
+        comment.setBook(existingBook);
+        commentDao.saveOne(comment);
+    }
+
+    public void getBookComments() {
+        inOutService.print("Type book-id to see its comments from book list below:");
+        List<Book> bookList = getBooks();
+
+        if (!bookList.isEmpty()) {
+            long id = inOutService.getUserIntInputMessage();
+            Book existingBook = bookDao.findOneById(id);
+
+            if (existingBook == null) {
+                inOutService.print(BOOK_DOES_NOT_EXIST_MSG);
+            } else {
+                processGetBookCommentsOfExistingBook(existingBook);
+            }
+        }
+    }
+
+    private void processGetBookCommentsOfExistingBook(Book existingBook) {
+        List<Comment> comments = commentDao.findAllByBook(existingBook);
+
+        if (comments.isEmpty()) {
+            inOutService.print(NO_BOOK_COMMENTS_AVAILABLE_MSG);
+        } else {
+            comments.forEach(comment -> inOutService.print(comment.getContent()));
+        }
+    }
+
+    public void deleteComment() {
+        inOutService.print("Type book-id to delete comment from book list below:");
+        List<Book> bookList = getBooks();
+
+        if (!bookList.isEmpty()) {
+            long id = inOutService.getUserIntInputMessage();
+            Book existingBook = bookDao.findOneById(id);
+
+            if (existingBook == null) {
+                inOutService.print(BOOK_DOES_NOT_EXIST_MSG);
+            } else {
+                processDeleteBookCommentsOfExistingBook(existingBook);
+            }
+        }
+
+    }
+
+    private void processDeleteBookCommentsOfExistingBook(Book existingBook) {
+        List<Comment> comments = commentDao.findAllByBook(existingBook);
+
+        if (comments.isEmpty()) {
+            inOutService.print(NO_BOOK_COMMENTS_AVAILABLE_MSG);
+        } else {
+            inOutService.print("Type comment-id to delete from book list below:");
+            comments.forEach(comment -> inOutService.print(comment.getId() + " " + comment.getContent()));
+            long id = inOutService.getUserIntInputMessage();
+
+            Optional<Comment> commentToDelete = comments.stream().filter(comment -> comment.getId() == id).findFirst();
+
+            if (commentToDelete.isPresent()) {
+                commentDao.deleteOne(commentToDelete.get());
+            } else {
+                inOutService.print(COMMENT_DOES_NOT_EXIST_MSG);
+            }
+        }
     }
 }

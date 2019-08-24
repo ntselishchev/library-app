@@ -30,4 +30,19 @@ public class LibraryController {
     public void updateBook() {
         libraryService.updateBook();
     }
+
+    @ShellMethod(value = "add new comment", key = {"ac", "add-comment"})
+    public void addComment() {
+        libraryService.addComment();
+    }
+
+    @ShellMethod(value = "get book comments", key = {"gc", "get-book-comments"})
+    public void getBookComments() {
+        libraryService.getBookComments();
+    }
+
+    @ShellMethod(value = "delete comment", key = {"dc", "delete-comment"})
+    public void deleteComment() {
+        libraryService.deleteComment();
+    }
 }

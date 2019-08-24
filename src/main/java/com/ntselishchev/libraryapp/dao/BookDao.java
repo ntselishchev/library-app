@@ -14,7 +14,7 @@ public interface BookDao {
 
     void update(long id, String title, long authorId, long genreId);
 
-    void saveOne(String title, long authorId, long genreId);
+    Book saveOne(String title, long authorId, long genreId);
 
     List<Book> findAll();
 }
