@@ -1,6 +1,5 @@
 package com.ntselishchev.libraryapp.dao;
 
-import com.ntselishchev.libraryapp.LibraryAppApplicationTests;
 import com.ntselishchev.libraryapp.domain.Author;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,7 +12,7 @@ import java.util.List;
 
 @DataJpaTest
 @Import(AuthorDaoJpa.class)
-public class AuthorDaoJpaTest extends LibraryAppApplicationTests {
+public class AuthorDaoJpaTest {
 
     @Autowired
     protected AuthorDao authorDao;

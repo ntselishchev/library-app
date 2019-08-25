@@ -1,6 +1,5 @@
 package com.ntselishchev.libraryapp.dao;
 
-import com.ntselishchev.libraryapp.LibraryAppApplicationTests;
 import com.ntselishchev.libraryapp.domain.Author;
 import com.ntselishchev.libraryapp.domain.Book;
 import com.ntselishchev.libraryapp.domain.Genre;
@@ -15,7 +14,7 @@ import java.util.List;
 
 @DataJpaTest
 @Import(BookDaoJpa.class)
-public class BookDaoJpaTest extends LibraryAppApplicationTests {
+public class BookDaoJpaTest {
 
     @Autowired
     protected BookDao bookDao;

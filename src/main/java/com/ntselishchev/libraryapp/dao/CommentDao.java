@@ -7,9 +7,7 @@ import java.util.List;
 
 public interface CommentDao {
 
-    List<Comment> findAll();
-
-    void saveOne(Comment comment);
+    Comment saveOne(Comment comment);
 
     void deleteOne(Comment comment);
 

@@ -23,18 +23,9 @@ public class CommentDaoJpa implements CommentDao {
     private static final String BOOK_ID = "bookId";
 
     @Override
-    public List<Comment> findAll() {
-        try {
-            TypedQuery<Comment> query = em.createQuery("select a from Comment a", Comment.class);
-            return query.getResultList();
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        }
-    }
-
-    @Override
-    public void saveOne(Comment comment) {
-        em.persist(comment);
+    public Comment saveOne(Comment comment) {
+        em.persist(em.contains(comment) ? comment : em.merge(comment));
+        return comment;
     }
 
     @Override
@@ -42,7 +33,7 @@ public class CommentDaoJpa implements CommentDao {
         try {
             TypedQuery<Comment> query = em.createQuery(
                     "select a from Comment a " +
-                    "join fetch a.book b " +
+                    "join a.book b " +
                     "where b.id = :bookId"
                     , Comment.class);
             query.setParameter(BOOK_ID, book.getId());

@@ -88,9 +88,9 @@ public class LibraryService {
         }
 
         long id = inOutService.getUserIntInputMessage();
+        Optional<Book> existingBook = bookList.stream().filter(book -> id == book.getId()).findFirst();
 
-        Book existingBook = bookDao.findOneById(id);
-        if (existingBook == null) {
+        if (!existingBook.isPresent()) {
             inOutService.print(BOOK_DOES_NOT_EXIST_MSG);
         } else {
             bookDao.deleteById(id);
@@ -104,12 +104,12 @@ public class LibraryService {
 
         if (!bookList.isEmpty()) {
             long id = inOutService.getUserIntInputMessage();
-            Book existingBook = bookDao.findOneById(id);
+            Optional<Book> existingBook = bookList.stream().filter(book -> id == book.getId()).findFirst();
 
-            if (existingBook == null) {
+            if (!existingBook.isPresent()) {
                 inOutService.print(BOOK_DOES_NOT_EXIST_MSG);
             } else {
-                processUpdateExistingBook(existingBook);
+                processUpdateExistingBook(existingBook.get());
             }
         }
     }
@@ -172,12 +172,12 @@ public class LibraryService {
 
         if (!bookList.isEmpty()) {
             long id = inOutService.getUserIntInputMessage();
-            Book existingBook = bookDao.findOneById(id);
+            Optional<Book> existingBook = bookList.stream().filter(book -> id == book.getId()).findFirst();
 
-            if (existingBook == null) {
+            if (!existingBook.isPresent()) {
                 inOutService.print(BOOK_DOES_NOT_EXIST_MSG);
             } else {
-                processAddCommentToExistingBook(existingBook);
+                processAddCommentToExistingBook(existingBook.get());
             }
         }
 
@@ -198,12 +198,12 @@ public class LibraryService {
 
         if (!bookList.isEmpty()) {
             long id = inOutService.getUserIntInputMessage();
-            Book existingBook = bookDao.findOneById(id);
+            Optional<Book> existingBook = bookList.stream().filter(book -> id == book.getId()).findFirst();
 
-            if (existingBook == null) {
+            if (!existingBook.isPresent()) {
                 inOutService.print(BOOK_DOES_NOT_EXIST_MSG);
             } else {
-                processGetBookCommentsOfExistingBook(existingBook);
+                processGetBookCommentsOfExistingBook(existingBook.get());
             }
         }
     }
@@ -224,12 +224,12 @@ public class LibraryService {
 
         if (!bookList.isEmpty()) {
             long id = inOutService.getUserIntInputMessage();
-            Book existingBook = bookDao.findOneById(id);
+            Optional<Book> existingBook = bookList.stream().filter(book -> id == book.getId()).findFirst();
 
-            if (existingBook == null) {
+            if (!existingBook.isPresent()) {
                 inOutService.print(BOOK_DOES_NOT_EXIST_MSG);
             } else {
-                processDeleteBookCommentsOfExistingBook(existingBook);
+                processDeleteBookCommentsOfExistingBook(existingBook.get());
             }
         }
 

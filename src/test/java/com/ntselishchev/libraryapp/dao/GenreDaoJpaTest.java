@@ -1,6 +1,5 @@
 package com.ntselishchev.libraryapp.dao;
 
-import com.ntselishchev.libraryapp.LibraryAppApplicationTests;
 import com.ntselishchev.libraryapp.domain.Genre;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,7 +12,7 @@ import java.util.List;
 
 @DataJpaTest
 @Import(GenreDaoJpa.class)
-public class GenreDaoJpaTest extends LibraryAppApplicationTests {
+public class GenreDaoJpaTest {
 
     @Autowired
     protected GenreDaoJpa genreDao;

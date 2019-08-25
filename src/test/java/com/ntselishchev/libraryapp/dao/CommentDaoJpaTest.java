@@ -1,6 +1,5 @@
 package com.ntselishchev.libraryapp.dao;
 
-import com.ntselishchev.libraryapp.LibraryAppApplicationTests;
 import com.ntselishchev.libraryapp.domain.Author;
 import com.ntselishchev.libraryapp.domain.Book;
 import com.ntselishchev.libraryapp.domain.Comment;
@@ -16,7 +15,7 @@ import java.util.List;
 
 @DataJpaTest
 @Import(CommentDaoJpa.class)
-public class CommentDaoJpaTest extends LibraryAppApplicationTests {
+public class CommentDaoJpaTest {
 
     @Autowired
     protected CommentDao commentDao;
@@ -32,31 +31,6 @@ public class CommentDaoJpaTest extends LibraryAppApplicationTests {
     private static final String NEW_AUTHOR_NAME = "author 1";
 
     private static final String NEW_GENRE_TITLE = "genre 1";
-
-    @Test
-    public void testFindAllWhenThereAreMoreThanOneCommentShouldReturnComments() {
-        Genre genre = new Genre(NEW_GENRE_TITLE);
-        em.persist(genre);
-        Author author = new Author(NEW_AUTHOR_NAME);
-        em.persist(author);
-        Book book = new Book(NEW_BOOK_TITLE, author, genre);
-        em.persist(book);
-        Comment comment = new Comment(NEW_COMMENT_CONTENT, book);
-        em.persist(comment);
-        Comment comment2 = new Comment(NEW_COMMENT_CONTENT_2, book);
-        em.persist(comment2);
-        em.flush();
-
-        List<Comment> comments = commentDao.findAll();
-        Assert.assertEquals(2, comments.size());
-    }
-
-    @Test
-    public void testFindAllWhenThereAreNoCommentsShouldReturnEmptyList() {
-        List<Comment> comments = commentDao.findAll();
-
-        Assert.assertTrue(comments.isEmpty());
-    }
 
     @Test
     public void testFindAllByBookWhenThereAreMoreThanOneCommentShouldReturnComments() {
@@ -102,9 +76,7 @@ public class CommentDaoJpaTest extends LibraryAppApplicationTests {
         em.flush();
 
         Comment comment = new Comment(NEW_COMMENT_CONTENT, book);
-
-        commentDao.saveOne(comment);
-        Comment commentFound = em.find(Comment.class, comment.getId());
+        Comment commentFound = commentDao.saveOne(comment);
 
         Assert.assertEquals(comment.getContent(), commentFound.getContent());
         Assert.assertEquals(comment.getBook(), commentFound.getBook());

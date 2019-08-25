@@ -20,10 +20,10 @@ public class Book {
     private long id;
     @Column
     private String title;
-    @OneToOne(targetEntity = Author.class)
+    @ManyToOne(targetEntity = Author.class)
     @JoinColumn(name = "author_id")
     private Author author;
-    @OneToOne(targetEntity = Genre.class)
+    @ManyToOne(targetEntity = Genre.class)
     @JoinColumn(name = "genre_id")
     private Genre genre;
 
