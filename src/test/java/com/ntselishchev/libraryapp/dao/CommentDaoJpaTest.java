@@ -4,14 +4,17 @@ import com.ntselishchev.libraryapp.domain.Author;
 import com.ntselishchev.libraryapp.domain.Book;
 import com.ntselishchev.libraryapp.domain.Comment;
 import com.ntselishchev.libraryapp.domain.Genre;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @Import(CommentDaoJpa.class)
@@ -47,7 +50,7 @@ public class CommentDaoJpaTest {
         em.flush();
 
         List<Comment> comments = commentDao.findAllByBook(book);
-        Assert.assertEquals(2, comments.size());
+        assertEquals(2, comments.size());
     }
 
     @Test
@@ -62,7 +65,7 @@ public class CommentDaoJpaTest {
 
         List<Comment> comments = commentDao.findAllByBook(book);
 
-        Assert.assertTrue(comments.isEmpty());
+        assertTrue(comments.isEmpty());
     }
 
     @Test
@@ -78,8 +81,8 @@ public class CommentDaoJpaTest {
         Comment comment = new Comment(NEW_COMMENT_CONTENT, book);
         Comment commentFound = commentDao.saveOne(comment);
 
-        Assert.assertEquals(comment.getContent(), commentFound.getContent());
-        Assert.assertEquals(comment.getBook(), commentFound.getBook());
+        assertEquals(comment.getContent(), commentFound.getContent());
+        assertEquals(comment.getBook(), commentFound.getBook());
     }
 
     @Test
@@ -97,6 +100,6 @@ public class CommentDaoJpaTest {
         commentDao.deleteOne(comment);
         Comment commentFound = em.find(Comment.class, comment.getId());
 
-        Assert.assertNull(commentFound);
+        assertNull(commentFound);
     }
 }

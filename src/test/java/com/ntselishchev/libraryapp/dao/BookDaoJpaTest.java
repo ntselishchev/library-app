@@ -3,14 +3,16 @@ package com.ntselishchev.libraryapp.dao;
 import com.ntselishchev.libraryapp.domain.Author;
 import com.ntselishchev.libraryapp.domain.Book;
 import com.ntselishchev.libraryapp.domain.Genre;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DataJpaTest
 @Import(BookDaoJpa.class)
@@ -48,7 +50,7 @@ public class BookDaoJpaTest {
 
         Book book = bookDao.findOneByTitleAndAuthorIdAndGenreId(WRONG_BOOK_TITLE, author.getId(), genre.getId());
 
-        Assert.assertNull(book);
+        assertNull(book);
     }
 
     @Test
@@ -63,7 +65,7 @@ public class BookDaoJpaTest {
 
         Book book = bookDao.findOneByTitleAndAuthorIdAndGenreId(newBook.getTitle(), author.getId(), NON_EXISTENT_GENRE_ID);
 
-        Assert.assertNull(book);
+        assertNull(book);
     }
 
     @Test
@@ -78,7 +80,7 @@ public class BookDaoJpaTest {
 
         Book book = bookDao.findOneByTitleAndAuthorIdAndGenreId(newBook.getTitle(), NON_EXISTENT_AUTHOR_ID, genre.getId());
 
-        Assert.assertNull(book);
+        assertNull(book);
     }
 
     @Test
@@ -93,9 +95,9 @@ public class BookDaoJpaTest {
 
         Book book = bookDao.findOneByTitleAndAuthorIdAndGenreId(newBook.getTitle(), author.getId(), genre.getId());
 
-        Assert.assertEquals(newBook.getTitle(), book.getTitle());
-        Assert.assertEquals(author.getName(), book.getAuthor().getName());
-        Assert.assertEquals(genre.getTitle(), book.getGenre().getTitle());
+        assertEquals(newBook.getTitle(), book.getTitle());
+        assertEquals(author.getName(), book.getAuthor().getName());
+        assertEquals(genre.getTitle(), book.getGenre().getTitle());
     }
 
     @Test
@@ -110,7 +112,7 @@ public class BookDaoJpaTest {
 
         Book book = bookDao.findOneById(NON_EXISTENT_BOOK_ID);
 
-        Assert.assertNull(book);
+        assertNull(book);
     }
 
     @Test
@@ -125,9 +127,9 @@ public class BookDaoJpaTest {
 
         Book book = bookDao.findOneById(newBook.getId());
 
-        Assert.assertEquals(newBook.getTitle(), book.getTitle());
-        Assert.assertEquals(author.getName(), book.getAuthor().getName());
-        Assert.assertEquals(genre.getTitle(), book.getGenre().getTitle());
+        assertEquals(newBook.getTitle(), book.getTitle());
+        assertEquals(author.getName(), book.getAuthor().getName());
+        assertEquals(genre.getTitle(), book.getGenre().getTitle());
     }
 
     @Test
@@ -143,14 +145,14 @@ public class BookDaoJpaTest {
         em.flush();
 
         List<Book> books = bookDao.findAll();
-        Assert.assertEquals(2, books.size());
+        assertEquals(2, books.size());
     }
 
     @Test
     public void testFindAllWhenThereAreNoBooksShouldReturnEmptyList() {
         List<Book> books = bookDao.findAll();
 
-        Assert.assertEquals(0, books.size());
+        assertEquals(0, books.size());
     }
 
     @Test
@@ -172,10 +174,10 @@ public class BookDaoJpaTest {
         Book oldBook = bookDao.findOneByTitleAndAuthorIdAndGenreId(newBook.getTitle(), author.getId(), genre.getId());
         Book updatedBook = bookDao.findOneByTitleAndAuthorIdAndGenreId(NEW_BOOK_TITLE, newAuthor.getId(), newGenre.getId());
 
-        Assert.assertNull(oldBook);
-        Assert.assertEquals(NEW_BOOK_TITLE, updatedBook.getTitle());
-        Assert.assertEquals(NEW_AUTHOR_NAME_2, updatedBook.getAuthor().getName());
-        Assert.assertEquals(NEW_GENRE_TITLE_2, updatedBook.getGenre().getTitle());
+        assertNull(oldBook);
+        assertEquals(NEW_BOOK_TITLE, updatedBook.getTitle());
+        assertEquals(NEW_AUTHOR_NAME_2, updatedBook.getAuthor().getName());
+        assertEquals(NEW_GENRE_TITLE_2, updatedBook.getGenre().getTitle());
     }
 
     @Test
@@ -189,9 +191,9 @@ public class BookDaoJpaTest {
         Book savedBook = bookDao.saveOne(NEW_BOOK_TITLE, author.getId(), genre.getId());
         Book book = em.find(Book.class, savedBook.getId());
 
-        Assert.assertEquals(NEW_BOOK_TITLE, book.getTitle());
-        Assert.assertEquals(author.getName(), book.getAuthor().getName());
-        Assert.assertEquals(genre.getTitle(), book.getGenre().getTitle());
+        assertEquals(NEW_BOOK_TITLE, book.getTitle());
+        assertEquals(author.getName(), book.getAuthor().getName());
+        assertEquals(genre.getTitle(), book.getGenre().getTitle());
     }
 
     @Test
@@ -207,7 +209,7 @@ public class BookDaoJpaTest {
         bookDao.deleteById(newBook.getId());
         Book book = em.find(Book.class, newBook.getId());
 
-        Assert.assertNull(book);
+        assertNull(book);
     }
 
 }

@@ -1,14 +1,16 @@
 package com.ntselishchev.libraryapp.dao;
 
 import com.ntselishchev.libraryapp.domain.Genre;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @Import(GenreDaoJpa.class)
@@ -32,13 +34,13 @@ public class GenreDaoJpaTest {
         em.flush();
 
         List<Genre> genres = genreDao.findAll();
-        Assert.assertEquals(2, genres.size());
+        assertEquals(2, genres.size());
     }
 
     @Test
     public void testFindAllWhenThereAreNoGenresShouldReturnEmptyList() {
         List<Genre> genres = genreDao.findAll();
 
-        Assert.assertTrue(genres.isEmpty());
+        assertTrue(genres.isEmpty());
     }
 }

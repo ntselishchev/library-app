@@ -1,14 +1,16 @@
 package com.ntselishchev.libraryapp.dao;
 
 import com.ntselishchev.libraryapp.domain.Author;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @Import(AuthorDaoJpa.class)
@@ -32,13 +34,13 @@ public class AuthorDaoJpaTest {
         em.flush();
 
         List<Author> authors = authorDao.findAll();
-        Assert.assertEquals(2, authors.size());
+        assertEquals(2, authors.size());
     }
 
     @Test
     public void testFindAllWhenThereAreNoAuthorsShouldReturnEmptyList() {
         List<Author> authors = authorDao.findAll();
 
-        Assert.assertTrue(authors.isEmpty());
+        assertTrue(authors.isEmpty());
     }
 }
