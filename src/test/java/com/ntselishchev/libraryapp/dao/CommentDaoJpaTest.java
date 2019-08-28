@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
@@ -17,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
-@Import(CommentDaoJpa.class)
 public class CommentDaoJpaTest {
 
     @Autowired
@@ -79,7 +77,7 @@ public class CommentDaoJpaTest {
         em.flush();
 
         Comment comment = new Comment(NEW_COMMENT_CONTENT, book);
-        Comment commentFound = commentDao.saveOne(comment);
+        Comment commentFound = commentDao.save(comment);
 
         assertEquals(comment.getContent(), commentFound.getContent());
         assertEquals(comment.getBook(), commentFound.getBook());
@@ -97,7 +95,7 @@ public class CommentDaoJpaTest {
         em.persist(comment);
         em.flush();
 
-        commentDao.deleteOne(comment);
+        commentDao.delete(comment);
         Comment commentFound = em.find(Comment.class, comment.getId());
 
         assertNull(commentFound);

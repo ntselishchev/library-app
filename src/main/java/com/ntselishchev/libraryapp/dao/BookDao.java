@@ -1,20 +1,16 @@
 package com.ntselishchev.libraryapp.dao;
 
 import com.ntselishchev.libraryapp.domain.Book;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface BookDao {
+public interface BookDao extends JpaRepository<Book, Long> {
+
+    @EntityGraph(attributePaths = {"author", "genre"})
+    List<Book> findAll();
 
     Book findOneByTitleAndAuthorIdAndGenreId(String title, long authorId, long genreId);
 
-    Book findOneById(long id);
-
-    void deleteById(long id);
-
-    void update(long id, String title, long authorId, long genreId);
-
-    Book saveOne(String title, long authorId, long genreId);
-
-    List<Book> findAll();
 }

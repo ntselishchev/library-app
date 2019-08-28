@@ -2,10 +2,8 @@ package com.ntselishchev.libraryapp.dao;
 
 
 import com.ntselishchev.libraryapp.domain.Author;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+public interface AuthorDao extends JpaRepository<Author, Long> {
 
-public interface AuthorDao {
-
-    List<Author> findAll();
 }

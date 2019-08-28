@@ -65,19 +65,16 @@ public class LibraryService {
     }
 
     private void addBook(String title, long authorId, long genreId) {
-        bookDao.saveOne(title, authorId, genreId);
-        inOutService.print(BOOK_SAVED_MSG);
-    }
+        Optional<Author> author = authorDao.findById(authorId);
+        Optional<Genre> genre = genreDao.findById(genreId);
 
-//    public void displayBook(int id) {
-//        Book existingBook = bookDao.findOneById(id);
-//        if (existingBook == null) {
-//            inOutService.print(BOOK_DOES_NOT_EXIST_MSG);
-//        } else {
-//            Object[] params = {existingBook.getId(), existingBook.getTitle(), existingBook.getAuthor().getName(), existingBook.getGenre().getTitle()};
-//            inOutService.print(StringUtils.arrayToDelimitedString(params, " "));
-//        }
-//    }
+        author.ifPresent(a ->
+                genre.ifPresent(g -> {
+                    Book newBook = new Book(title, a, g);
+                    bookDao.save(newBook);
+                    inOutService.print(BOOK_SAVED_MSG);
+        }));
+    }
 
     public void deleteBook() {
         inOutService.print("Type book-id to delete from book list below:");
@@ -136,8 +133,17 @@ public class LibraryService {
         if (existingBook.hasSameParams(title, authorId, genreId)) {
             inOutService.print(BOOK_ALREADY_EXISTS_MSG);
         } else {
-            bookDao.update(existingBook.getId(), title, authorId, genreId);
-            inOutService.print(BOOK_UPDATED_MSG);
+            Optional<Author> author = authorDao.findById(authorId);
+            Optional<Genre> genre = genreDao.findById(genreId);
+
+            author.ifPresent(a ->
+                    genre.ifPresent(g -> {
+                        existingBook.setTitle(title);
+                        existingBook.setAuthor(a);
+                        existingBook.setGenre(g);
+                        bookDao.save(existingBook);
+                        inOutService.print(BOOK_UPDATED_MSG);
+                    }));
         }
     }
 
@@ -189,7 +195,7 @@ public class LibraryService {
         Comment comment = new Comment();
         comment.setContent(content);
         comment.setBook(existingBook);
-        commentDao.saveOne(comment);
+        commentDao.save(comment);
     }
 
     public void getBookComments() {
@@ -248,7 +254,7 @@ public class LibraryService {
             Optional<Comment> commentToDelete = comments.stream().filter(comment -> comment.getId() == id).findFirst();
 
             if (commentToDelete.isPresent()) {
-                commentDao.deleteOne(commentToDelete.get());
+                commentDao.delete(commentToDelete.get());
             } else {
                 inOutService.print(COMMENT_DOES_NOT_EXIST_MSG);
             }
