@@ -1,10 +1,8 @@
 package com.ntselishchev.libraryapp.dao;
 
 import com.ntselishchev.libraryapp.domain.Genre;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+public interface GenreDao extends JpaRepository<Genre, Long> {
 
-public interface GenreDao {
-
-    List<Genre> findAll();
 }
