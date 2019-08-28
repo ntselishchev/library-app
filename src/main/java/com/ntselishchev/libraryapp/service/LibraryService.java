@@ -68,11 +68,12 @@ public class LibraryService {
         Optional<Author> author = authorDao.findById(authorId);
         Optional<Genre> genre = genreDao.findById(genreId);
 
-        if (author.isPresent() && genre.isPresent()) {
-            Book newBook = new Book(title, author.get(), genre.get());
-            bookDao.save(newBook);
-            inOutService.print(BOOK_SAVED_MSG);
-        }
+        author.ifPresent(a ->
+                genre.ifPresent(g -> {
+                    Book newBook = new Book(title, a, g);
+                    bookDao.save(newBook);
+                    inOutService.print(BOOK_SAVED_MSG);
+        }));
     }
 
     public void deleteBook() {
@@ -135,13 +136,14 @@ public class LibraryService {
             Optional<Author> author = authorDao.findById(authorId);
             Optional<Genre> genre = genreDao.findById(genreId);
 
-            if (author.isPresent() && genre.isPresent()) {
-                existingBook.setTitle(title);
-                existingBook.setAuthor(author.get());
-                existingBook.setGenre(genre.get());
-                bookDao.save(existingBook);
-                inOutService.print(BOOK_UPDATED_MSG);
-            }
+            author.ifPresent(a ->
+                    genre.ifPresent(g -> {
+                        existingBook.setTitle(title);
+                        existingBook.setAuthor(a);
+                        existingBook.setGenre(g);
+                        bookDao.save(existingBook);
+                        inOutService.print(BOOK_UPDATED_MSG);
+                    }));
         }
     }
 
