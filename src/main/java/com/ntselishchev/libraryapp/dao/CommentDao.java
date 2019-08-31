@@ -2,11 +2,13 @@ package com.ntselishchev.libraryapp.dao;
 
 import com.ntselishchev.libraryapp.domain.Book;
 import com.ntselishchev.libraryapp.domain.Comment;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface CommentDao extends JpaRepository<Comment, Long> {
+public interface CommentDao extends MongoRepository<Comment, String> {
 
     List<Comment> findAllByBook(Book book);
+
+    void deleteAllByBook(Book book);
 }
