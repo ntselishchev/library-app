@@ -3,18 +3,20 @@ package com.ntselishchev.libraryapp.service;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
-@Service
 @Getter
 @Setter
-public class PropertiesService {
+@Component
+@ConfigurationProperties("spring.data.mongodb")
+public class DataBaseProperties {
 
     @Value("${spring.data.mongodb.host}")
-    private String mongoDbHost;
+    private String host;
     @Value("${spring.data.mongodb.port}")
-    private String mongoDbPort;
+    private String port;
     @Value("${spring.data.mongodb.database}")
-    private String mongoDbDataBase;
+    private String database;
 
 }

@@ -1,7 +1,7 @@
 package com.ntselishchev.libraryapp.config;
 
 import com.github.mongobee.Mongobee;
-import com.ntselishchev.libraryapp.service.PropertiesService;
+import com.ntselishchev.libraryapp.service.DataBaseProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,15 +10,15 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class MongoBeeConfig {
 
-    private final PropertiesService props;
+    private final DataBaseProperties props;
 
     @Bean
     public Mongobee mongobee(){
         Mongobee runner = new Mongobee("mongodb://" +
-                props.getMongoDbHost() + ":" +
-                props.getMongoDbPort() + "/" +
-                props.getMongoDbDataBase());
-        runner.setDbName(props.getMongoDbDataBase());
+                props.getHost() + ":" +
+                props.getPort() + "/" +
+                props.getDatabase());
+        runner.setDbName(props.getDatabase());
         runner.setChangeLogsScanPackage(
                 "com.ntselishchev.libraryapp.changelogs");
         return runner;
