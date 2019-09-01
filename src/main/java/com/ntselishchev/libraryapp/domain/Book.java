@@ -4,31 +4,29 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "books")
+@Document(value = "books")
 public class Book {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @Column(name = "title")
+    private String id;
+    @Field("title")
     private String title;
-    @ManyToOne(targetEntity = Author.class)
-    @JoinColumn(name = "author_id")
+    @DBRef
     private Author author;
-    @ManyToOne(targetEntity = Genre.class)
-    @JoinColumn(name = "genre_id")
+    @DBRef
     private Genre genre;
 
-    public boolean hasSameParams(String title, long authorId, long genreId) {
-        return this.title.equals(title) && author.getId() == authorId && genre.getId() == genreId;
+    public boolean hasSameParams(String title, String authorId, String genreId) {
+        return this.title.equals(title) && author.getId().equals(authorId) && genre.getId().equals(genreId);
     }
 
     public Book(String title, Author author, Genre genre) {

@@ -42,11 +42,11 @@ public class LibraryService {
 
         inOutService.print("Select author-id from authors below:");
         List<Author> authorList = getAuthors();
-        long authorId = inOutService.getUserIntInputMessage();
+        String authorId = inOutService.getUserInputMessage();
 
         inOutService.print("Select genre-id from authors below:");
         List<Genre> genreList = getGenres();
-        long genreId = inOutService.getUserIntInputMessage();
+        String genreId = inOutService.getUserInputMessage();
 
         boolean authorIdInRange = authorList.stream().map(Author::getId).collect(Collectors.toList()).contains(authorId);
         boolean genreIdInRange = genreList.stream().map(Genre::getId).collect(Collectors.toList()).contains(genreId);
@@ -64,7 +64,7 @@ public class LibraryService {
         }
     }
 
-    private void addBook(String title, long authorId, long genreId) {
+    private void addBook(String title, String authorId, String genreId) {
         Optional<Author> author = authorDao.findById(authorId);
         Optional<Genre> genre = genreDao.findById(genreId);
 
@@ -84,8 +84,8 @@ public class LibraryService {
             return;
         }
 
-        long id = inOutService.getUserIntInputMessage();
-        Optional<Book> existingBook = bookList.stream().filter(book -> id == book.getId()).findFirst();
+        String id = inOutService.getUserInputMessage();
+        Optional<Book> existingBook = bookList.stream().filter(book -> id.equals(book.getId())).findFirst();
 
         if (!existingBook.isPresent()) {
             inOutService.print(BOOK_DOES_NOT_EXIST_MSG);
@@ -100,8 +100,8 @@ public class LibraryService {
         List<Book> bookList = getBooks();
 
         if (!bookList.isEmpty()) {
-            long id = inOutService.getUserIntInputMessage();
-            Optional<Book> existingBook = bookList.stream().filter(book -> id == book.getId()).findFirst();
+            String id = inOutService.getUserInputMessage();
+            Optional<Book> existingBook = bookList.stream().filter(book -> id.equals(book.getId())).findFirst();
 
             if (!existingBook.isPresent()) {
                 inOutService.print(BOOK_DOES_NOT_EXIST_MSG);
@@ -117,11 +117,11 @@ public class LibraryService {
 
         inOutService.print("Select new author-id from authors below:");
         List<Author> authorList = getAuthors();
-        long authorId = inOutService.getUserIntInputMessage();
+        String authorId = inOutService.getUserInputMessage();
 
         inOutService.print("Select new genre-id from authors below:");
         List<Genre> genreList = getGenres();
-        long genreId = inOutService.getUserIntInputMessage();
+        String genreId = inOutService.getUserInputMessage();
 
         boolean authorIdInRange = authorList.stream().map(Author::getId).collect(Collectors.toList()).contains(authorId);
         boolean genreIdInRange = genreList.stream().map(Genre::getId).collect(Collectors.toList()).contains(genreId);
@@ -177,8 +177,8 @@ public class LibraryService {
         List<Book> bookList = getBooks();
 
         if (!bookList.isEmpty()) {
-            long id = inOutService.getUserIntInputMessage();
-            Optional<Book> existingBook = bookList.stream().filter(book -> id == book.getId()).findFirst();
+            String id = inOutService.getUserInputMessage();
+            Optional<Book> existingBook = bookList.stream().filter(book -> id.equals(book.getId())).findFirst();
 
             if (!existingBook.isPresent()) {
                 inOutService.print(BOOK_DOES_NOT_EXIST_MSG);
@@ -203,8 +203,8 @@ public class LibraryService {
         List<Book> bookList = getBooks();
 
         if (!bookList.isEmpty()) {
-            long id = inOutService.getUserIntInputMessage();
-            Optional<Book> existingBook = bookList.stream().filter(book -> id == book.getId()).findFirst();
+            String id = inOutService.getUserInputMessage();
+            Optional<Book> existingBook = bookList.stream().filter(book -> id.equals(book.getId())).findFirst();
 
             if (!existingBook.isPresent()) {
                 inOutService.print(BOOK_DOES_NOT_EXIST_MSG);
@@ -229,8 +229,8 @@ public class LibraryService {
         List<Book> bookList = getBooks();
 
         if (!bookList.isEmpty()) {
-            long id = inOutService.getUserIntInputMessage();
-            Optional<Book> existingBook = bookList.stream().filter(book -> id == book.getId()).findFirst();
+            String id = inOutService.getUserInputMessage();
+            Optional<Book> existingBook = bookList.stream().filter(book -> id.equals(book.getId())).findFirst();
 
             if (!existingBook.isPresent()) {
                 inOutService.print(BOOK_DOES_NOT_EXIST_MSG);
@@ -249,9 +249,9 @@ public class LibraryService {
         } else {
             inOutService.print("Type comment-id to delete from book list below:");
             comments.forEach(comment -> inOutService.print(comment.getId() + " " + comment.getContent()));
-            long id = inOutService.getUserIntInputMessage();
+            String id = inOutService.getUserInputMessage();
 
-            Optional<Comment> commentToDelete = comments.stream().filter(comment -> comment.getId() == id).findFirst();
+            Optional<Comment> commentToDelete = comments.stream().filter(comment -> comment.getId().equals(id)).findFirst();
 
             if (commentToDelete.isPresent()) {
                 commentDao.delete(commentToDelete.get());

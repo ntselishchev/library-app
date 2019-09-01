@@ -4,10 +4,11 @@ import com.ntselishchev.libraryapp.domain.Author;
 import com.ntselishchev.libraryapp.domain.Book;
 import com.ntselishchev.libraryapp.domain.Comment;
 import com.ntselishchev.libraryapp.domain.Genre;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.List;
 
@@ -15,14 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DataJpaTest
+@DataMongoTest
 public class CommentDaoJpaTest {
 
     @Autowired
     protected CommentDao commentDao;
 
     @Autowired
-    private TestEntityManager em;
+    private MongoTemplate mongoTemplate;
 
     private static final String NEW_BOOK_TITLE = "book 1";
 
@@ -33,19 +34,26 @@ public class CommentDaoJpaTest {
 
     private static final String NEW_GENRE_TITLE = "genre 1";
 
+    @BeforeEach
+    public void setUp() {
+        mongoTemplate.dropCollection(Comment.class);
+        mongoTemplate.dropCollection(Genre.class);
+        mongoTemplate.dropCollection(Author.class);
+        mongoTemplate.dropCollection(Book.class);
+    }
+
     @Test
     public void testFindAllByBookWhenThereAreMoreThanOneCommentShouldReturnComments() {
         Genre genre = new Genre(NEW_GENRE_TITLE);
-        em.persist(genre);
+        mongoTemplate.save(genre);
         Author author = new Author(NEW_AUTHOR_NAME);
-        em.persist(author);
+        mongoTemplate.save(author);
         Book book = new Book(NEW_BOOK_TITLE, author, genre);
-        em.persist(book);
+        mongoTemplate.save(book);
         Comment comment = new Comment(NEW_COMMENT_CONTENT, book);
-        em.persist(comment);
+        mongoTemplate.save(comment);
         Comment comment2 = new Comment(NEW_COMMENT_CONTENT_2, book);
-        em.persist(comment2);
-        em.flush();
+        mongoTemplate.save(comment2);
 
         List<Comment> comments = commentDao.findAllByBook(book);
         assertEquals(2, comments.size());
@@ -54,12 +62,11 @@ public class CommentDaoJpaTest {
     @Test
     public void testFindAllByBookWhenThereAreNoCommentsShouldReturnEmptyList() {
         Genre genre = new Genre(NEW_GENRE_TITLE);
-        em.persist(genre);
+        mongoTemplate.save(genre);
         Author author = new Author(NEW_AUTHOR_NAME);
-        em.persist(author);
+        mongoTemplate.save(author);
         Book book = new Book(NEW_BOOK_TITLE, author, genre);
-        em.persist(book);
-        em.flush();
+        mongoTemplate.save(book);
 
         List<Comment> comments = commentDao.findAllByBook(book);
 
@@ -69,12 +76,11 @@ public class CommentDaoJpaTest {
     @Test
     public void testSaveOneShouldSaveComment() {
         Genre genre = new Genre(NEW_GENRE_TITLE);
-        em.persist(genre);
+        mongoTemplate.save(genre);
         Author author = new Author(NEW_AUTHOR_NAME);
-        em.persist(author);
+        mongoTemplate.save(author);
         Book book = new Book(NEW_BOOK_TITLE, author, genre);
-        em.persist(book);
-        em.flush();
+        mongoTemplate.save(book);
 
         Comment comment = new Comment(NEW_COMMENT_CONTENT, book);
         Comment commentFound = commentDao.save(comment);
@@ -86,17 +92,16 @@ public class CommentDaoJpaTest {
     @Test
     public void testDeleteOneShouldDeleteComment() {
         Genre genre = new Genre(NEW_GENRE_TITLE);
-        em.persist(genre);
+        mongoTemplate.save(genre);
         Author author = new Author(NEW_AUTHOR_NAME);
-        em.persist(author);
+        mongoTemplate.save(author);
         Book book = new Book(NEW_BOOK_TITLE, author, genre);
-        em.persist(book);
+        mongoTemplate.save(book);
         Comment comment = new Comment(NEW_COMMENT_CONTENT, book);
-        em.persist(comment);
-        em.flush();
+        mongoTemplate.save(comment);
 
         commentDao.delete(comment);
-        Comment commentFound = em.find(Comment.class, comment.getId());
+        Comment commentFound = mongoTemplate.findById(comment.getId(), Comment.class);
 
         assertNull(commentFound);
     }

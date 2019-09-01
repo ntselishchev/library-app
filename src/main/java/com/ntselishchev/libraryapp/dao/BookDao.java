@@ -1,16 +1,14 @@
 package com.ntselishchev.libraryapp.dao;
 
 import com.ntselishchev.libraryapp.domain.Book;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface BookDao extends JpaRepository<Book, Long> {
+public interface BookDao extends MongoRepository<Book, String> {
 
-    @EntityGraph(attributePaths = {"author", "genre"})
     List<Book> findAll();
 
-    Book findOneByTitleAndAuthorIdAndGenreId(String title, long authorId, long genreId);
+    Book findOneByTitleAndAuthorIdAndGenreId(String title, String authorId, String genreId);
 
 }
