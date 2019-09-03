@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/head :: header}"></head>
+
+    <body>
+        <form th:action="@{update}" th:method="put" >
+            <div class="container">
+                <h1 th:text="${'Book: ' + book.id}">Default Book Id</h1>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Author</th>
+                            <th scope="col">Genre</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td th:text="${book.id}">Default Id</td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" th:field="${book.title}" th:placeholder="${book.title}"/>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <select class="form-control" th:name="authorId">
+                                        <option
+                                                th:each="author : ${authors}"
+                                                th:text="${author.name}"
+                                                th:selected="${book.author.id == author.id}"
+                                                th:value="${author.id}"
+                                        >
+                                            Default Author Name
+                                        </option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <select class="form-control" th:name="genreId">
+                                        <option
+                                                th:each="genre : ${genres}"
+                                                th:text="${genre.title}"
+                                                th:selected="${book.genre.id == genre.id}"
+                                                th:value="${genre.id}"
+                                        >
+                                            Default Genre Title
+                                        </option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <input type="hidden" th:field="${book.id}">
+                                <input class="btn btn-primary" type="submit" value="Save">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </body>
+</html>

@@ -1,48 +1,73 @@
 package com.ntselishchev.libraryapp.controller;
 
+import com.ntselishchev.libraryapp.domain.Author;
+import com.ntselishchev.libraryapp.domain.Book;
+import com.ntselishchev.libraryapp.domain.Genre;
 import com.ntselishchev.libraryapp.service.LibraryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@ShellComponent
+import java.util.List;
+
+@Controller
 @RequiredArgsConstructor
 public class LibraryController {
 
     private final LibraryService libraryService;
 
-    @ShellMethod(value = "add new book", key = {"ab", "add-book"})
-    public void addBook() {
-        libraryService.processAddBook();
+    @RequestMapping("/")
+    public String home(){
+        return "redirect:books/getAll";
     }
 
-    @ShellMethod(value = "get all books", key = {"gb", "get-books"})
-    public void getBooks() {
-        libraryService.getBooks();
+    @GetMapping("books/add")
+    public String addBook(Model model) {
+        List<Author> authorList = libraryService.getAuthors();
+        List<Genre> genreList = libraryService.getGenres();
+        model.addAttribute("authors", authorList);
+        model.addAttribute("genres", genreList);
+        return "add";
     }
 
-    @ShellMethod(value = "delete book", key = {"db", "delete-book"})
-    public void deleteBook() {
-        libraryService.deleteBook();
+    @PostMapping("books/create")
+    public String createBook(String title, String authorId, String genreId, RedirectAttributes redirectAttributes) {
+        libraryService.addBook(title, authorId, genreId);
+        redirectAttributes.addFlashAttribute("created", true);
+        return "redirect:/books/getAll";
     }
 
-    @ShellMethod(value = "update book", key = {"ub", "update-book"})
-    public void updateBook() {
-        libraryService.updateBook();
+    @GetMapping("books/getAll")
+    public String getBooks(Model model) {
+        List<Book> bookList = libraryService.getBooks();
+        model.addAttribute("books", bookList);
+        return "getAll";
     }
 
-    @ShellMethod(value = "add new comment", key = {"ac", "add-comment"})
-    public void addComment() {
-        libraryService.addComment();
+    @DeleteMapping("books/delete")
+    public String deleteBook(String id, RedirectAttributes redirectAttributes) {
+        libraryService.deleteBook(id);
+        redirectAttributes.addFlashAttribute("deleted", true);
+        return "redirect:/books/getAll";
     }
 
-    @ShellMethod(value = "get book comments", key = {"gc", "get-book-comments"})
-    public void getBookComments() {
-        libraryService.getBookComments();
+    @PutMapping("books/update")
+    public String updateBook(String id, String title, String authorId, String genreId, RedirectAttributes redirectAttributes) {
+        libraryService.updateBook(id, title, authorId, genreId);
+        redirectAttributes.addFlashAttribute("updated", true);
+        return "redirect:/books/getAll";
     }
 
-    @ShellMethod(value = "delete comment", key = {"dc", "delete-comment"})
-    public void deleteComment() {
-        libraryService.deleteComment();
+    @GetMapping("books/edit")
+    public String getBook(@RequestParam("id") String id, Model model) {
+        Book book = libraryService.getBook(id);
+        List<Author> authorList = libraryService.getAuthors();
+        List<Genre> genreList = libraryService.getGenres();
+        model.addAttribute("book", book);
+        model.addAttribute("authors", authorList);
+        model.addAttribute("genres", genreList);
+        return "edit";
     }
 }
