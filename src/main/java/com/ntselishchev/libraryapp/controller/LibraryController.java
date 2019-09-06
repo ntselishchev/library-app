@@ -3,6 +3,7 @@ package com.ntselishchev.libraryapp.controller;
 import com.ntselishchev.libraryapp.domain.Author;
 import com.ntselishchev.libraryapp.domain.Book;
 import com.ntselishchev.libraryapp.domain.Genre;
+import com.ntselishchev.libraryapp.dto.BookDTO;
 import com.ntselishchev.libraryapp.service.LibraryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -20,7 +21,7 @@ public class LibraryController {
 
     @RequestMapping("/")
     public String home(){
-        return "redirect:books/getAll";
+        return "redirect:books/get-all";
     }
 
     @GetMapping("books/add")
@@ -33,13 +34,13 @@ public class LibraryController {
     }
 
     @PostMapping("books/create")
-    public String createBook(String title, String authorId, String genreId, RedirectAttributes redirectAttributes) {
-        libraryService.addBook(title, authorId, genreId);
+    public String createBook(BookDTO bookDto, RedirectAttributes redirectAttributes) {
+        libraryService.addBook(bookDto);
         redirectAttributes.addFlashAttribute("created", true);
-        return "redirect:/books/getAll";
+        return "redirect:/books/get-all";
     }
 
-    @GetMapping("books/getAll")
+    @GetMapping("books/get-all")
     public String getBooks(Model model) {
         List<Book> bookList = libraryService.getBooks();
         model.addAttribute("books", bookList);
@@ -50,14 +51,14 @@ public class LibraryController {
     public String deleteBook(String id, RedirectAttributes redirectAttributes) {
         libraryService.deleteBook(id);
         redirectAttributes.addFlashAttribute("deleted", true);
-        return "redirect:/books/getAll";
+        return "redirect:/books/get-all";
     }
 
     @PutMapping("books/update")
-    public String updateBook(String id, String title, String authorId, String genreId, RedirectAttributes redirectAttributes) {
-        libraryService.updateBook(id, title, authorId, genreId);
+    public String updateBook(BookDTO bookDto, RedirectAttributes redirectAttributes) {
+        libraryService.updateBook(bookDto);
         redirectAttributes.addFlashAttribute("updated", true);
-        return "redirect:/books/getAll";
+        return "redirect:/books/get-all";
     }
 
     @GetMapping("books/edit")

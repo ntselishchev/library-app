@@ -6,6 +6,7 @@ import com.ntselishchev.libraryapp.dao.GenreDao;
 import com.ntselishchev.libraryapp.domain.Author;
 import com.ntselishchev.libraryapp.domain.Book;
 import com.ntselishchev.libraryapp.domain.Genre;
+import com.ntselishchev.libraryapp.dto.BookDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +21,13 @@ public class LibraryService {
     private final AuthorDao authorDao;
     private final GenreDao genreDao;
 
-    public void addBook(String title, String authorId, String genreId) {
-        Optional<Author> author = authorDao.findById(authorId);
-        Optional<Genre> genre = genreDao.findById(genreId);
+    public void addBook(BookDTO bookDto) {
+        Optional<Author> author = authorDao.findById(bookDto.getAuthorId());
+        Optional<Genre> genre = genreDao.findById(bookDto.getGenreId());
 
         author.ifPresent(a ->
                 genre.ifPresent(g -> {
-                    Book newBook = new Book(title, a, g);
+                    Book newBook = new Book(bookDto.getTitle(), a, g);
                     bookDao.save(newBook);
         }));
     }
@@ -35,17 +36,17 @@ public class LibraryService {
         bookDao.deleteById(id);
     }
 
-    public void updateBook(String id, String title, String authorId, String genreId) {
-        Optional<Book> book = bookDao.findById(id);
-        Optional<Author> author = authorDao.findById(authorId);
-        Optional<Genre> genre = genreDao.findById(genreId);
+    public void updateBook(BookDTO bookDto) {
+        Optional<Book> book = bookDao.findById(bookDto.getId());
+        Optional<Author> author = authorDao.findById(bookDto.getAuthorId());
+        Optional<Genre> genre = genreDao.findById(bookDto.getGenreId());
 
         book.ifPresent(b ->
             author.ifPresent(a ->
                 genre.ifPresent(g -> {
                     b.setAuthor(a);
                     b.setGenre(g);
-                    b.setTitle(title);
+                    b.setTitle(bookDto.getTitle());
                     bookDao.save(b);
                 })
             )
