@@ -1,10 +1,8 @@
 package com.ntselishchev.libraryapp.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class BookDTO {
 
     private String id;

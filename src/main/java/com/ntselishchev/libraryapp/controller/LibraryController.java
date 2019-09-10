@@ -21,7 +21,7 @@ public class LibraryController {
 
     @RequestMapping("/")
     public String home(){
-        return "redirect:books/get-all";
+        return "redirect:/books/get-all";
     }
 
     @GetMapping("books/add")
