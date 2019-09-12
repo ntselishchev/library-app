@@ -44,7 +44,7 @@ public class LibraryController {
     public String getBooks(Model model) {
         List<Book> bookList = libraryService.getBooks();
         model.addAttribute("books", bookList);
-        return "getAll";
+        return "book-list";
     }
 
     @DeleteMapping("books/delete")

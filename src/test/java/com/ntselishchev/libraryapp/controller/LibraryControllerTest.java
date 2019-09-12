@@ -70,7 +70,7 @@ public class LibraryControllerTest {
         mockMvc.perform(get("/books/get-all")
                 .contentType("application/json"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("getAll"));
+                .andExpect(view().name("book-list"));
     }
 
     @Test
