@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/head :: header}"></head>
+
+    <body>
+        <form th:action="@{create}" th:method="post" >
+            <div class="container">
+                <h1>Add new book</h1>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Title</th>
+                            <th scope="col">Author</th>
+                            <th scope="col">Genre</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" th:name="title"/>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <select class="form-control" th:name="authorId">
+                                        <option
+                                                th:each="author : ${authors}"
+                                                th:text="${author.name}"
+                                                th:value="${author.id}"
+                                        >
+                                            Default Author Name
+                                        </option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <select class="form-control" th:name="genreId">
+                                        <option
+                                                th:each="genre : ${genres}"
+                                                th:text="${genre.title}"
+                                                th:value="${genre.id}"
+                                        >
+                                            Default Genre Title
+                                        </option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <input class="btn btn-primary" type="submit" value="Create">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <a class="btn btn-primary" th:href="@{get-all}" href="book-list.html">Back to main page</a>
+            </div>
+        </form>
+    </body>
+</html>

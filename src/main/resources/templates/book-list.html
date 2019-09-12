@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/head :: header}"></head>
+
+    <body>
+        <div class="container">
+
+            <h1>Books:</h1>
+
+            <div th:if="${created}"
+                 class="alert alert-success"
+                 role="alert"
+            >
+                Book has been created successfully!
+            </div>
+            <div th:if="${deleted}"
+                 class="alert alert-success"
+                 role="alert"
+            >
+                Book has been deleted successfully!
+            </div>
+            <div th:if="${updated}"
+                 class="alert alert-success"
+                 role="alert"
+            >
+                Book has been updated successfully!
+            </div>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Author</th>
+                        <th scope="col">Genre</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="book : ${books}">
+                        <td th:text="${book.id}">Default Id</td>
+                        <td th:text="${book.title}">Default Book</td>
+                        <td th:text="${book.author.name}">Default Author</td>
+                        <td th:text="${book.genre.title}">Default Genre</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <div class="btn">
+                                    <a class="btn btn-warning" th:href="@{edit(id=${book.id})}" href="edit.html">Edit</a>
+                                </div>
+                                <div class="btn">
+                                    <form th:action="@{delete}" th:method="delete" >
+                                        <input type="hidden" th:name="id" th:value="${book.id}">
+                                        <input class="btn btn-danger" type="submit" value="Delete">
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <a class="btn btn-primary" th:href="@{add}" href="add.html">Add</a>
+        </div>
+    </body>
+</html>
