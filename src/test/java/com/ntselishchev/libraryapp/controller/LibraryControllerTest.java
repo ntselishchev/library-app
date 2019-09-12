@@ -1,6 +1,5 @@
-package com.ntselishchev.libraryapp.dao;
+package com.ntselishchev.libraryapp.controller;
 
-import com.ntselishchev.libraryapp.controller.LibraryController;
 import com.ntselishchev.libraryapp.domain.Book;
 import com.ntselishchev.libraryapp.dto.BookDTO;
 import com.ntselishchev.libraryapp.service.LibraryService;
@@ -16,8 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = LibraryController.class)
@@ -63,14 +61,16 @@ public class LibraryControllerTest {
     public void testBooksAddWhenIsGetRequestShouldOkStatus() throws Exception {
         mockMvc.perform(get("/books/add")
                 .contentType("application/json"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("add"));
     }
 
     @Test
     public void testGetAllWhenIsGetRequestShouldReturnOkStatus() throws Exception {
         mockMvc.perform(get("/books/get-all")
                 .contentType("application/json"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("getAll"));
     }
 
     @Test
@@ -113,7 +113,8 @@ public class LibraryControllerTest {
 
         mockMvc.perform(get("/books/edit")
                 .param("id", BOOK_ID))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("edit"));
 
         verify(libraryService, times(1)).getBook(BOOK_ID);
     }
