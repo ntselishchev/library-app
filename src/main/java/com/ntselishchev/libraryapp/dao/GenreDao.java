@@ -1,8 +1,8 @@
 package com.ntselishchev.libraryapp.dao;
 
 import com.ntselishchev.libraryapp.domain.Genre;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
-public interface GenreDao extends MongoRepository<Genre, String> {
+public interface GenreDao extends ReactiveMongoRepository<Genre, String> {
 
 }

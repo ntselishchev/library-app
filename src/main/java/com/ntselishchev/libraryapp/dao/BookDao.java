@@ -1,14 +1,11 @@
 package com.ntselishchev.libraryapp.dao;
 
 import com.ntselishchev.libraryapp.domain.Book;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import reactor.core.publisher.Flux;
 
-import java.util.List;
+public interface BookDao extends ReactiveMongoRepository<Book, String> {
 
-public interface BookDao extends MongoRepository<Book, String> {
-
-    List<Book> findAll();
-
-    Book findOneByTitleAndAuthorIdAndGenreId(String title, String authorId, String genreId);
+    Flux<Book> findAll();
 
 }

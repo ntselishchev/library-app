@@ -9,9 +9,8 @@ import com.ntselishchev.libraryapp.domain.Genre;
 import com.ntselishchev.libraryapp.dto.BookDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -21,52 +20,45 @@ public class LibraryService {
     private final AuthorDao authorDao;
     private final GenreDao genreDao;
 
-    public void addBook(BookDTO bookDto) {
-        Optional<Author> author = authorDao.findById(bookDto.getAuthorId());
-        Optional<Genre> genre = genreDao.findById(bookDto.getGenreId());
-
-        author.ifPresent(a ->
-                genre.ifPresent(g -> {
+    public Mono<Void> addBook(BookDTO bookDto) {
+        return authorDao.findById(bookDto.getAuthorId()).flatMap(a ->
+                genreDao.findById(bookDto.getGenreId()).flatMap(g -> {
                     Book newBook = new Book(bookDto.getTitle(), a, g);
-                    bookDao.save(newBook);
-        }));
-    }
-
-    public void deleteBook(String id) {
-        bookDao.deleteById(id);
-    }
-
-    public void updateBook(BookDTO bookDto) {
-        Optional<Book> book = bookDao.findById(bookDto.getId());
-        Optional<Author> author = authorDao.findById(bookDto.getAuthorId());
-        Optional<Genre> genre = genreDao.findById(bookDto.getGenreId());
-
-        book.ifPresent(b ->
-            author.ifPresent(a ->
-                genre.ifPresent(g -> {
-                    b.setAuthor(a);
-                    b.setGenre(g);
-                    b.setTitle(bookDto.getTitle());
-                    bookDao.save(b);
+                    return bookDao.save(newBook);
                 })
-            )
-        );
+        ).then();
     }
 
-    public List<Author> getAuthors() {
+    public Mono<Void> deleteBook(String id) {
+        return bookDao.findById(id).flatMap(b -> bookDao.deleteById(id));
+    }
+
+    public Mono<Void> updateBook(BookDTO bookDto) {
+        return bookDao.findById(bookDto.getId()).flatMap(b ->
+                authorDao.findById(bookDto.getAuthorId()).flatMap(a ->
+                        genreDao.findById(bookDto.getGenreId()).flatMap(g -> {
+                            b.setAuthor(a);
+                            b.setGenre(g);
+                            b.setTitle(bookDto.getTitle());
+                            return bookDao.save(b);
+                        })
+                )
+        ).then();
+    }
+
+    public Flux<Author> getAuthors() {
         return authorDao.findAll();
     }
 
-    public List<Genre> getGenres() {
+    public Flux<Genre> getGenres() {
         return genreDao.findAll();
     }
 
-    public List<Book> getBooks() {
+    public Flux<Book> getBooks() {
         return bookDao.findAll();
     }
 
-    public Book getBook(String id) {
-        Optional<Book> book = bookDao.findById(id);
-        return book.orElse(null);
+    public Mono<Book> getBook(String id) {
+        return bookDao.findById(id);
     }
 }
