@@ -158,35 +158,35 @@ public class BookDaoJpaTest {
     }
 
 
-    //TODO doesnt work
-//    @Test
-//    public void testDeleteByIdWhenBookHasCommentsShouldDeleteBookAndRelatedComments() {
-//        Genre genre = new Genre(NEW_GENRE_TITLE);
-//        mongoTemplate.save(genre).block();
-//        Author author = new Author(NEW_AUTHOR_NAME);
-//        mongoTemplate.save(author).block();
-//        Book newBook = new Book(FIRST_EXISTING_BOOK_TITLE, author, genre);
-//        mongoTemplate.save(newBook).block();
-//        Comment newComment = new Comment("test content", newBook);
-//        mongoTemplate.save(newComment).block();
-//
-//        bookDao.deleteById(newBook.getId()).block();
-//
-//        Mono<Book> book = mongoTemplate.findById(newBook.getId(), Book.class);
-//        Mono<Comment> comment = mongoTemplate.findById(newComment.getId(), Comment.class);
-//
-//        StepVerifier
-//                .create(book)
-//                .expectNextCount(0L)
-//                .expectComplete()
-//                .verify();
-//
-//
-//        StepVerifier
-//                .create(comment)
-//                .expectNextCount(0L)
-//                .expectComplete()
-//                .verify();
-//    }
+    //TODO doesnt work when launched from this class
+    @Test
+    public void testDeleteByIdWhenBookHasCommentsShouldDeleteBookAndRelatedComments() {
+        Genre genre = new Genre(NEW_GENRE_TITLE);
+        mongoTemplate.save(genre).block();
+        Author author = new Author(NEW_AUTHOR_NAME);
+        mongoTemplate.save(author).block();
+        Book newBook = new Book(FIRST_EXISTING_BOOK_TITLE, author, genre);
+        mongoTemplate.save(newBook).block();
+        Comment newComment = new Comment("test content", newBook);
+        mongoTemplate.save(newComment).block();
+
+        bookDao.deleteById(newBook.getId()).block();
+
+        Mono<Book> book = mongoTemplate.findById(newBook.getId(), Book.class);
+        Mono<Comment> comment = mongoTemplate.findById(newComment.getId(), Comment.class);
+
+        StepVerifier
+                .create(book)
+                .expectNextCount(0L)
+                .expectComplete()
+                .verify();
+
+
+        StepVerifier
+                .create(comment)
+                .expectNextCount(0L)
+                .expectComplete()
+                .verify();
+    }
 
 }
