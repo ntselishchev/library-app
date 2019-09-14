@@ -6,14 +6,12 @@ import com.ntselishchev.libraryapp.domain.Genre;
 import com.ntselishchev.libraryapp.dto.BookDTO;
 import com.ntselishchev.libraryapp.service.LibraryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class LibraryController {
 
@@ -34,41 +32,32 @@ public class LibraryController {
     }
 
     @PostMapping("books/create")
-    public String createBook(BookDTO bookDto, RedirectAttributes redirectAttributes) {
+    public void createBook(@RequestBody BookDTO bookDto) {
         libraryService.addBook(bookDto);
-        redirectAttributes.addFlashAttribute("created", true);
-        return "redirect:/books/get-all";
     }
 
     @GetMapping("books/get-all")
-    public String getBooks(Model model) {
-        List<Book> bookList = libraryService.getBooks();
-        model.addAttribute("books", bookList);
-        return "book-list";
+    public List<Book> getBooks() {
+        return libraryService.getBooks();
     }
 
     @DeleteMapping("books/delete")
-    public String deleteBook(String id, RedirectAttributes redirectAttributes) {
-        libraryService.deleteBook(id);
-        redirectAttributes.addFlashAttribute("deleted", true);
-        return "redirect:/books/get-all";
+    public void deleteBook(@RequestBody BookDTO bookDto) {
+        libraryService.deleteBook(bookDto.getId());
     }
 
     @PutMapping("books/update")
-    public String updateBook(BookDTO bookDto, RedirectAttributes redirectAttributes) {
+    public void updateBook(@RequestBody BookDTO bookDto) {
         libraryService.updateBook(bookDto);
-        redirectAttributes.addFlashAttribute("updated", true);
-        return "redirect:/books/get-all";
     }
 
-    @GetMapping("books/edit")
-    public String getBook(@RequestParam("id") String id, Model model) {
-        Book book = libraryService.getBook(id);
-        List<Author> authorList = libraryService.getAuthors();
-        List<Genre> genreList = libraryService.getGenres();
-        model.addAttribute("book", book);
-        model.addAttribute("authors", authorList);
-        model.addAttribute("genres", genreList);
-        return "edit";
+    @GetMapping("books/get-genres")
+    public List<Genre> getGenres() {
+        return libraryService.getGenres();
+    }
+
+    @GetMapping("books/get-authors")
+    public List<Author> getAuthors() {
+        return libraryService.getAuthors();
     }
 }
