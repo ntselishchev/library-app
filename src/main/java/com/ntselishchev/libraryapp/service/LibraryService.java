@@ -2,6 +2,7 @@ package com.ntselishchev.libraryapp.service;
 
 import com.ntselishchev.libraryapp.dao.AuthorDao;
 import com.ntselishchev.libraryapp.dao.BookDao;
+import com.ntselishchev.libraryapp.dao.BookRepository;
 import com.ntselishchev.libraryapp.dao.GenreDao;
 import com.ntselishchev.libraryapp.domain.Author;
 import com.ntselishchev.libraryapp.domain.Book;
@@ -17,6 +18,7 @@ import reactor.core.publisher.Mono;
 public class LibraryService {
 
     private final BookDao bookDao;
+    private final BookRepository bookRepository;
     private final AuthorDao authorDao;
     private final GenreDao genreDao;
 
@@ -30,7 +32,8 @@ public class LibraryService {
     }
 
     public Mono<Void> deleteBook(String id) {
-        return bookDao.findById(id).flatMap(b -> bookDao.deleteById(id));
+        return bookDao.findById(id)
+                .flatMap(b -> bookRepository.deleteById(id));
     }
 
     public Mono<Void> updateBook(BookDTO bookDto) {
