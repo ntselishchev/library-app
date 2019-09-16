@@ -4,6 +4,6 @@ import reactor.core.publisher.Mono;
 
 public interface BookRepository {
 
-    Mono<Void> deleteById(String id);
+    Mono<Void> deleteBookWithRelatedCommentsByBookId(String id);
 
 }

@@ -154,4 +154,32 @@ public class BookDaoJpaTest {
                 .verify();
     }
 
+    @Test
+    public void testDeleteByIdWhenBookHasCommentsShouldDeleteBookAndRelatedComments() {
+        Genre genre = new Genre(NEW_GENRE_TITLE);
+        mongoTemplate.save(genre).block();
+        Author author = new Author(NEW_AUTHOR_NAME);
+        mongoTemplate.save(author).block();
+        Book newBook = new Book(FIRST_EXISTING_BOOK_TITLE, author, genre);
+        mongoTemplate.save(newBook).block();
+        Comment newComment = new Comment("test content", newBook);
+        mongoTemplate.save(newComment).block();
+
+        bookDao.deleteBookWithRelatedCommentsByBookId(newBook.getId()).block();
+
+        Mono<Book> book = mongoTemplate.findById(newBook.getId(), Book.class);
+        Mono<Comment> comment = mongoTemplate.findById(newComment.getId(), Comment.class);
+
+        StepVerifier
+                .create(book)
+                .expectNextCount(0L)
+                .expectComplete()
+                .verify();
+
+        StepVerifier
+                .create(comment)
+                .expectNextCount(0L)
+                .expectComplete()
+                .verify();
+    }
 }

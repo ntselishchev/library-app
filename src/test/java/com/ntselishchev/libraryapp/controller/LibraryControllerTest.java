@@ -3,7 +3,7 @@ package com.ntselishchev.libraryapp.controller;
 import com.google.common.net.HttpHeaders;
 import com.ntselishchev.libraryapp.domain.Book;
 import com.ntselishchev.libraryapp.dto.BookDTO;
-import com.ntselishchev.libraryapp.service.LibraryService;
+import com.ntselishchev.libraryapp.service.LibraryServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -25,7 +25,7 @@ public class LibraryControllerTest {
     private WebTestClient webClient;
 
     @MockBean
-    private LibraryService libraryService;
+    private LibraryServiceImpl libraryService;
 
     private final String BOOK_ID = "book id";
     private final String BOOK_TITLE = "book title";

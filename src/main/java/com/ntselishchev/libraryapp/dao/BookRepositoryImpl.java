@@ -15,7 +15,7 @@ public class BookRepositoryImpl implements BookRepository {
 
     private final ReactiveMongoTemplate template;
 
-    public Mono<Void> deleteById(String id) {
+    public Mono<Void> deleteBookWithRelatedCommentsByBookId(String id) {
         return template.remove(Query.query(Criteria.where("book").is(id)), Comment.class)
                 .then(template.remove(Query.query(Criteria.where("id").is(id)), Book.class))
                 .then();
