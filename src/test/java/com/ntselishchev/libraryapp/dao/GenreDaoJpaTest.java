@@ -5,12 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
 @DataMongoTest
 public class GenreDaoJpaTest {
@@ -19,7 +16,7 @@ public class GenreDaoJpaTest {
     protected GenreDao genreDao;
 
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private ReactiveMongoTemplate mongoTemplate;
 
     private static final String NEW_GENRE_TITLE = "genre 1";
     private static final String NEW_GENRE_TITLE_2 = "genre 2";
@@ -27,24 +24,33 @@ public class GenreDaoJpaTest {
 
     @BeforeEach
     public void setUp() {
-        mongoTemplate.dropCollection(Genre.class);
+        mongoTemplate.dropCollection(Genre.class).block();
     }
 
     @Test
     public void testFindAllWhenThereAreMoreThanOneGenreShouldReturnGenres() {
         Genre genre = new Genre(NEW_GENRE_TITLE);
-        mongoTemplate.save(genre);
+        mongoTemplate.save(genre).block();
         Genre genre2 = new Genre(NEW_GENRE_TITLE_2);
-        mongoTemplate.save(genre2);
+        mongoTemplate.save(genre2).block();
 
-        List<Genre> genres = genreDao.findAll();
-        assertEquals(2, genres.size());
+        Flux<Genre> genres = genreDao.findAll();
+
+        StepVerifier
+                .create(genres)
+                .expectNextCount(2L)
+                .expectComplete()
+                .verify();
     }
 
     @Test
     public void testFindAllWhenThereAreNoGenresShouldReturnEmptyList() {
-        List<Genre> genres = genreDao.findAll();
+        Flux<Genre> genres = genreDao.findAll();
 
-        assertTrue(genres.isEmpty());
+        StepVerifier
+                .create(genres)
+                .expectNextCount(0L)
+                .expectComplete()
+                .verify();
     }
 }

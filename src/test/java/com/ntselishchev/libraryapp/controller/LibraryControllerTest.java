@@ -1,31 +1,31 @@
 package com.ntselishchev.libraryapp.controller;
 
+import com.google.common.net.HttpHeaders;
 import com.ntselishchev.libraryapp.domain.Book;
 import com.ntselishchev.libraryapp.dto.BookDTO;
-import com.ntselishchev.libraryapp.service.LibraryService;
+import com.ntselishchev.libraryapp.service.LibraryServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = LibraryController.class)
+@WebFluxTest(controllers = LibraryController.class)
 public class LibraryControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private WebTestClient webClient;
 
     @MockBean
-    private LibraryService libraryService;
+    private LibraryServiceImpl libraryService;
 
     private final String BOOK_ID = "book id";
     private final String BOOK_TITLE = "book title";
@@ -33,11 +33,9 @@ public class LibraryControllerTest {
     private final String GENRE_ID = "genre id";
 
     @Test
-    public void testHomeShouldRedirectToGetAll() throws Exception {
-        mockMvc.perform(get("/")
-                .contentType("application/json"))
-                .andExpect(redirectedUrl("/books/get-all"))
-                .andExpect(status().isFound());
+    public void testHomeShouldRedirectToGetAll() {
+        webClient.get().uri("/").exchange()
+                .expectStatus().isSeeOther().expectHeader().valueEquals(HttpHeaders.LOCATION, "/books/get-all");
     }
 
     @Test
@@ -47,74 +45,84 @@ public class LibraryControllerTest {
         book.setGenreId(GENRE_ID);
         book.setTitle(BOOK_TITLE);
 
-        mockMvc.perform(post("/books/create")
-                .param("authorId", book.getAuthorId())
-                .param("genreId", book.getGenreId())
-                .param("title", book.getTitle()))
-                .andExpect(redirectedUrl("/books/get-all"))
-                .andExpect(status().isFound());
+        Mockito.when(libraryService.addBook(book)).thenReturn(Mono.when());
+
+        webClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/books/create")
+                        .queryParam("authorId", book.getAuthorId())
+                        .queryParam("genreId", book.getGenreId())
+                        .queryParam("title", book.getTitle())
+                        .build())
+                .exchange()
+                .expectStatus().isSeeOther().expectHeader().valueEquals(HttpHeaders.LOCATION, "/books/get-all");
 
         verify(libraryService, Mockito.times(1)).addBook(book);
     }
 
     @Test
-    public void testBooksAddWhenIsGetRequestShouldOkStatus() throws Exception {
-        mockMvc.perform(get("/books/add")
-                .contentType("application/json"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("add"));
+    public void testBooksAddWhenIsGetRequestShouldOkStatus() {
+        webClient.get().uri("/books/add").exchange().expectStatus().isOk();
     }
 
     @Test
-    public void testGetAllWhenIsGetRequestShouldReturnOkStatus() throws Exception {
-        mockMvc.perform(get("/books/get-all")
-                .contentType("application/json"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("book-list"));
+    public void testGetAllWhenIsGetRequestShouldReturnOkStatus()  {
+        webClient.get().uri("/books/get-all").exchange().expectStatus().isOk();
     }
 
     @Test
-    public void testDeleteBookWhenIsDeleteRequestAndRequestHasIdShouldInvokeLibraryServiceAndReturnIsFoundStatusAndRedirectToGetAll() throws Exception {
-        mockMvc.perform(delete("/books/delete")
-                .contentType("application/json")
-                .param("id", BOOK_ID))
-                .andExpect(redirectedUrl("/books/get-all"))
-                .andExpect(status().isFound());
+    public void testDeleteBookWhenIsDeleteRequestAndRequestHasIdShouldInvokeLibraryServiceAndReturnIsFoundStatusAndRedirectToGetAll() {
+        Mockito.when(libraryService.deleteBook(BOOK_ID)).thenReturn(Mono.when());
+
+        webClient.delete()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/books/delete")
+                        .queryParam("id", BOOK_ID)
+                        .build())
+                .exchange()
+                .expectStatus().isSeeOther().expectHeader().valueEquals(HttpHeaders.LOCATION, "/books/get-all");
 
         verify(libraryService, Mockito.times(1)).deleteBook(BOOK_ID);
     }
 
     @Test
-    public void testUpdateBookWhenIsPutRequestAndRequestHasBookShouldInvokeLibraryServiceAndReturnIsFoundStatusAndRedirectToGetAll() throws Exception {
+    public void testUpdateBookWhenIsPutRequestAndRequestHasBookShouldInvokeLibraryServiceAndReturnIsFoundStatusAndRedirectToGetAll() {
         BookDTO book = new BookDTO();
         book.setId(BOOK_ID);
         book.setAuthorId(AUTHOR_ID);
         book.setGenreId(GENRE_ID);
         book.setTitle(BOOK_TITLE);
 
-        mockMvc.perform(put("/books/update")
-                .param("id", book.getId())
-                .param("authorId", book.getAuthorId())
-                .param("genreId", book.getGenreId())
-                .param("title", book.getTitle()))
-                .andExpect(redirectedUrl("/books/get-all"))
-                .andExpect(status().isFound());
+        Mockito.when(libraryService.updateBook(book)).thenReturn(Mono.when());
+
+        webClient.put()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/books/update")
+                        .queryParam("id", book.getId())
+                        .queryParam("authorId", book.getAuthorId())
+                        .queryParam("genreId", book.getGenreId())
+                        .queryParam("title", book.getTitle())
+                        .build())
+                .exchange()
+                .expectStatus().isSeeOther().expectHeader().valueEquals(HttpHeaders.LOCATION, "/books/get-all");
 
         verify(libraryService, Mockito.times(1)).updateBook(book);
     }
 
     @Test
-    public void testBooksEditWhenIsGetRequestShouldOkStatus() throws Exception {
+    public void testBooksEditWhenIsGetRequestShouldOkStatus() {
         Book book = new Book();
         book.setId(BOOK_ID);
         book.setTitle(BOOK_TITLE);
 
-        Mockito.when(libraryService.getBook(BOOK_ID)).thenReturn(book);
+        Mockito.when(libraryService.getBook(BOOK_ID)).thenReturn(Mono.just(book));
 
-        mockMvc.perform(get("/books/edit")
-                .param("id", BOOK_ID))
-                .andExpect(status().isOk())
-                .andExpect(view().name("edit"));
+        webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/books/edit")
+                        .queryParam("id", BOOK_ID)
+                        .build())
+                .exchange().expectStatus().isOk();
 
         verify(libraryService, times(1)).getBook(BOOK_ID);
     }

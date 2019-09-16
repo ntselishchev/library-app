@@ -5,12 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
 @DataMongoTest
 public class AuthorDaoJpaTest {
@@ -19,31 +16,40 @@ public class AuthorDaoJpaTest {
     protected AuthorDao authorDao;
 
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private ReactiveMongoTemplate mongoTemplate;
 
     private static final String NEW_AUTHOR_NAME = "author 1";
     private static final String NEW_AUTHOR_NAME_2 = "author 2";
 
     @BeforeEach
     public void setUp() {
-        mongoTemplate.dropCollection(Author.class);
+        mongoTemplate.dropCollection(Author.class).block();
     }
 
     @Test
     public void testFindAllWhenThereAreMoreThanOneAuthorShouldReturnAuthors() {
         Author author = new Author(NEW_AUTHOR_NAME);
-        mongoTemplate.save(author);
+        mongoTemplate.save(author).block();
         Author author2 = new Author(NEW_AUTHOR_NAME_2);
-        mongoTemplate.save(author2);
+        mongoTemplate.save(author2).block();
 
-        List<Author> authors = authorDao.findAll();
-        assertEquals(2, authors.size());
+        Flux<Author> authors = authorDao.findAll();
+
+        StepVerifier
+                .create(authors)
+                .expectNextCount(2L)
+                .expectComplete()
+                .verify();
     }
 
     @Test
     public void testFindAllWhenThereAreNoAuthorsShouldReturnEmptyList() {
-        List<Author> authors = authorDao.findAll();
+        Flux<Author> authors = authorDao.findAll();
 
-        assertTrue(authors.isEmpty());
+        StepVerifier
+                .create(authors)
+                .expectNextCount(0L)
+                .expectComplete()
+                .verify();
     }
 }
