@@ -44,7 +44,7 @@ class BookList extends Component {
     }
 
     requestData() {
-        Utils.getData("get-all").then((rs) => {
+        Utils.getData("books").then((rs) => {
             this.setState({data: rs ? rs : []})
         });
     }
@@ -53,7 +53,7 @@ class BookList extends Component {
         this.requestData();
     }
 
-    handleAdd = () => {
+    handleAddButtonClicked = () => {
         const {addActive} = this.state;
 
         this.setState({
@@ -61,7 +61,7 @@ class BookList extends Component {
         });
     };
 
-    handleCreate = (edited) => {
+    handleBookHasBeenCreated = (edited) => {
         const {addActive} = this.state;
 
         if (edited) {
@@ -78,7 +78,7 @@ class BookList extends Component {
         return (
             <React.Fragment>
                 {addActive &&
-                    <AddModal completed={this.handleCreate}/>
+                    <AddModal completed={this.handleBookHasBeenCreated}/>
                 }
                 <Row>
                     <Col>
@@ -97,7 +97,7 @@ class BookList extends Component {
                 </Row>
                 <Row style={{marginTop: '10px', marginLeft: '10px'}}>
                     <Col>
-                        <Button onClick={this.handleAdd} type="primary" style={{ marginBottom: 16 }}>
+                        <Button onClick={this.handleAddButtonClicked} type="primary" style={{ marginBottom: 16 }}>
                             Add a row
                         </Button>
                     </Col>

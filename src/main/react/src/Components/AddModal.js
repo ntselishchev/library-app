@@ -3,11 +3,9 @@ import {Select, Row, Col, Input, Modal, Button, Icon} from "antd";
 import Utils from "../Utils/Utils";
 const { Option } = Select;
 
-class BookList extends Component {
+class AddModal extends Component {
 
-    state = {
-        modalVisible: true
-    };
+    state = {};
 
     componentWillMount() {
         this.getAuthorsAndGenres();
@@ -19,13 +17,13 @@ class BookList extends Component {
     }
 
     getAuthors() {
-        Utils.getData("get-authors").then((rs) => {
+        Utils.getData("authors").then((rs) => {
             this.setState({authors: rs ? rs : []})
         });
     }
 
     getGenres() {
-        Utils.getData("get-genres").then((rs) => {
+        Utils.getData("genres").then((rs) => {
             this.setState({genres: rs ? rs : []})
         });
     }
@@ -134,4 +132,4 @@ class BookList extends Component {
     }
 }
 
-export default BookList;
+export default AddModal;

@@ -3,7 +3,7 @@ import {Button} from "antd";
 import EditModal from "./EditModal";
 import Utils from "../Utils/Utils";
 
-class BookList extends Component {
+class ActionButtons extends Component {
 
     state = {
         data: undefined,
@@ -56,4 +56,4 @@ class BookList extends Component {
     }
 }
 
-export default BookList;
+export default ActionButtons;
