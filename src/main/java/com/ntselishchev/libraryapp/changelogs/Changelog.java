@@ -15,6 +15,7 @@ public class Changelog {
     private static final String GENRES = "genres";
     private static final String BOOKS = "books";
     private static final String COMMENTS = "comments";
+    private static final String USERS = "users";
 
     @ChangeSet(order = "001", id = "insertDefaultData", author = "n.tselishchev")
     public void insertDefaultData(MongoDatabase db) {
@@ -62,8 +63,22 @@ public class Changelog {
         
     }
 
+    @ChangeSet(order = "002", id = "insertUsers", author = "n.tselishchev")
+    public void insertUsers(MongoDatabase db) {
+        MongoCollection<Document> authorCollection = db.getCollection(USERS);
+        Document userDoc1 = new Document("userName", "admin").append("password", "password")
+                .append("expired", false).append("locked", false).append("credentialsExpired", false)
+                .append("enabled", true).append("role", "USER");
+        Document userDoc2 = new Document("userName", "expired").append("password", "password")
+                .append("expired", true).append("locked", false).append("credentialsExpired", false)
+                .append("enabled", true).append("role", "USER");
+        Document userDoc3 = new Document("userName", "locked").append("password", "password")
+                .append("expired", false).append("locked", true).append("credentialsExpired", false)
+                .append("enabled", true).append("role", "USER");
+        authorCollection.insertMany(Arrays.asList(userDoc1, userDoc2, userDoc3));
+    }
+
     private Document getRef(String collection, Document doc) {
         return new Document("$ref", collection).append("$id", doc.get("_id"));
     }
-
 }
