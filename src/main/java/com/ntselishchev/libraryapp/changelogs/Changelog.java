@@ -7,6 +7,8 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @ChangeLog
 public class Changelog {
@@ -16,6 +18,7 @@ public class Changelog {
     private static final String BOOKS = "books";
     private static final String COMMENTS = "comments";
     private static final String USERS = "users";
+    private static final String ACL = "ACL";
 
     @ChangeSet(order = "001", id = "insertDefaultData", author = "n.tselishchev")
     public void insertDefaultData(MongoDatabase db) {
@@ -60,6 +63,40 @@ public class Changelog {
         Document commentDoc4 = new Document("content", "comment 4").append("book", getRef(BOOKS, bookDoc3));
         Document commentDoc5 = new Document("content", "comment 5").append("book", getRef(BOOKS, bookDoc2));
         commentCollection.insertMany(Arrays.asList(commentDoc1, commentDoc2, commentDoc3, commentDoc4, commentDoc5));
+
+        MongoCollection<Document> aclCollection = db.getCollection(ACL);
+
+        Document ownerDoc = new Document("name", "admin").append("isPrincipal", true);
+        Document sidDoc = new Document("name", "admin").append("isPrincipal", true);
+        Document permissionDoc = new Document("sid", sidDoc)
+                .append("permission", 1)
+                .append("granting", true)
+                .append("auditFailure", true)
+                .append("auditSuccess", true);
+        List<Document> permissionDocs = Collections.singletonList(permissionDoc);
+        Document acl = new Document("_class", "org.springframework.security.acls.domain.MongoAcl")
+                .append("className", "com.ntselishchev.libraryapp.domain.Book")
+                .append("instanceId", bookDoc1.get("_id").toString())
+                .append("owner", ownerDoc)
+                .append("inheritPermissions", true)
+                .append("permissions", permissionDocs);
+
+        Document ownerDoc2 = new Document("name", "admin").append("isPrincipal", true);
+        Document sidDoc2 = new Document("name", "admin").append("isPrincipal", true);
+        Document permissionDoc2 = new Document("sid", sidDoc2)
+                .append("permission", 1)
+                .append("granting", true)
+                .append("auditFailure", true)
+                .append("auditSuccess", true);
+        List<Document> permissionDocs2 = Collections.singletonList(permissionDoc2);
+        Document acl2 = new Document("_class", "org.springframework.security.acls.domain.MongoAcl")
+                .append("className", "com.ntselishchev.libraryapp.domain.Book")
+                .append("instanceId", bookDoc2.get("_id").toString())
+                .append("owner", ownerDoc2)
+                .append("inheritPermissions", true)
+                .append("permissions", permissionDocs2);
+
+        aclCollection.insertMany(Arrays.asList(acl, acl2));
         
     }
 
@@ -75,7 +112,10 @@ public class Changelog {
         Document userDoc3 = new Document("userName", "locked").append("password", "password")
                 .append("expired", false).append("locked", true).append("credentialsExpired", false)
                 .append("enabled", true).append("role", "USER");
-        authorCollection.insertMany(Arrays.asList(userDoc1, userDoc2, userDoc3));
+        Document userDoc4 = new Document("userName", "somebody").append("password", "password")
+                .append("expired", false).append("locked", false).append("credentialsExpired", false)
+                .append("enabled", true).append("role", "USER");
+        authorCollection.insertMany(Arrays.asList(userDoc1, userDoc2, userDoc3, userDoc4));
     }
 
     private Document getRef(String collection, Document doc) {

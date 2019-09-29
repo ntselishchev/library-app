@@ -8,6 +8,8 @@ import com.ntselishchev.libraryapp.domain.Book;
 import com.ntselishchev.libraryapp.domain.Genre;
 import com.ntselishchev.libraryapp.dto.BookDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -61,6 +63,8 @@ public class LibraryServiceImpl implements LibraryService {
         return genreDao.findAll();
     }
 
+    @PreAuthorize("hasAuthority('USER')")
+    @PostFilter("hasPermission(filterObject, 'READ')")
     public List<Book> getBooks() {
         return bookDao.findAll();
     }
