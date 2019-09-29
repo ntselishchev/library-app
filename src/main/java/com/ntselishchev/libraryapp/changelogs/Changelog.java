@@ -20,6 +20,8 @@ public class Changelog {
     private static final String USERS = "users";
     private static final String ACL = "ACL";
 
+    private static final int ACL_PERMISSION_READ = 1;
+
     @ChangeSet(order = "001", id = "insertDefaultData", author = "n.tselishchev")
     public void insertDefaultData(MongoDatabase db) {
         MongoCollection<Document> authorCollection = db.getCollection(AUTHORS);
@@ -69,7 +71,7 @@ public class Changelog {
         Document ownerDoc = new Document("name", "admin").append("isPrincipal", true);
         Document sidDoc = new Document("name", "admin").append("isPrincipal", true);
         Document permissionDoc = new Document("sid", sidDoc)
-                .append("permission", 1)
+                .append("permission", ACL_PERMISSION_READ)
                 .append("granting", true)
                 .append("auditFailure", true)
                 .append("auditSuccess", true);
@@ -84,7 +86,7 @@ public class Changelog {
         Document ownerDoc2 = new Document("name", "admin").append("isPrincipal", true);
         Document sidDoc2 = new Document("name", "admin").append("isPrincipal", true);
         Document permissionDoc2 = new Document("sid", sidDoc2)
-                .append("permission", 1)
+                .append("permission", ACL_PERMISSION_READ)
                 .append("granting", true)
                 .append("auditFailure", true)
                 .append("auditSuccess", true);

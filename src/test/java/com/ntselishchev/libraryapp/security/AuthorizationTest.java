@@ -3,6 +3,7 @@ package com.ntselishchev.libraryapp.security;
 import com.ntselishchev.libraryapp.controller.LibraryController;
 import com.ntselishchev.libraryapp.service.LibraryService;
 import com.ntselishchev.libraryapp.service.LibraryServiceImpl;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,12 @@ public class AuthorizationTest {
     @Autowired
     private LibraryService libraryService;
 
-//    @Test
-//    @WithMockUser(username = "wrong", roles = {"WRONG"})
-//    public void testGetBooksWhenIsNotAuthenticatedShouldRedirectToLoginPage() throws Exception {
-//        controller.getBooks();
-//
-//        verify(libraryService, never()).getBooks();
-//    }
+    @Ignore
+    @Test
+    @WithMockUser(username = "wrong", roles = {"WRONG"})
+    public void testGetBooksWhenIsNotAuthenticatedShouldRedirectToLoginPage() throws Exception {
+        controller.getBooks();
+
+        verify(libraryService, never()).getBooks();
+    }
 }
