@@ -1,0 +1,16 @@
+CREATE TABLE authors(
+   ID              BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+   name            VARCHAR(255) NOT NULL
+);
+CREATE TABLE genres(
+   ID              BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+   title           VARCHAR(255) NOT NULL
+);
+CREATE TABLE books(
+   ID              BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+   title           VARCHAR(255) NOT NULL,
+   author_id       BIGINT NOT NULL,
+   genre_id        BIGINT NOT NULL,
+   FOREIGN KEY (AUTHOR_ID) references AUTHORS(ID),
+   FOREIGN KEY (GENRE_ID) references GENRES(ID)
+);
