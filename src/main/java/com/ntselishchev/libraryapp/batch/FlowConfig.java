@@ -36,8 +36,8 @@ public class FlowConfig  extends DefaultBatchConfigurer {
 
 
     @Bean
-    public Step step1() {
-        return stepBuilderFactory.get("step1")
+    public Step migrateAuthors() {
+        return stepBuilderFactory.get("migrateAuthors")
                 .<Author, Author>chunk(3)
                 .reader(authorReader())
                 .processor(authorProcessor())
@@ -76,8 +76,8 @@ public class FlowConfig  extends DefaultBatchConfigurer {
     }
 
     @Bean
-    public Step step2() {
-        return stepBuilderFactory.get("step2")
+    public Step migrateGenres() {
+        return stepBuilderFactory.get("migrateGenres")
                 .<Genre, Genre>chunk(3)
                 .reader(genreReader())
                 .processor(genreProcessor())
@@ -116,8 +116,8 @@ public class FlowConfig  extends DefaultBatchConfigurer {
     }
 
     @Bean
-    public Step step3() {
-        return stepBuilderFactory.get("step3")
+    public Step migrateBooks() {
+        return stepBuilderFactory.get("migrateBooks")
                 .<Book, Book>chunk(3)
                 .reader(bookReader())
                 .processor(bookProcessor())
@@ -162,13 +162,13 @@ public class FlowConfig  extends DefaultBatchConfigurer {
     }
 
     @Bean
-    public Job importBooksJob(Step step1, Step step2, Step step3) {
+    public Job importBooksJob(Step migrateAuthors, Step migrateGenres, Step migrateBooks) {
         return jobBuilderFactory
                 .get("importBooksJob")
                 .incrementer(new RunIdIncrementer())
-                .flow(step1)
-                .next(step2)
-                .next(step3)
+                .flow(migrateAuthors)
+                .next(migrateGenres)
+                .next(migrateBooks)
                 .end()
                 .build();
     }
