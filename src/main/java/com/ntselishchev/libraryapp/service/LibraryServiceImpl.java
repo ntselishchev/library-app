@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Service("libraryService")
 @RequiredArgsConstructor
 public class LibraryServiceImpl implements LibraryService {
 
@@ -38,8 +38,8 @@ public class LibraryServiceImpl implements LibraryService {
         bookDao.deleteById(id);
     }
 
-    public void updateBook(String id, BookDTO bookDto) {
-        Optional<Book> book = bookDao.findById(id);
+    public void updateBook(BookDTO bookDto) {
+        Optional<Book> book = bookDao.findById(bookDto.getId());
         Optional<Author> author = authorDao.findById(bookDto.getAuthorId());
         Optional<Genre> genre = genreDao.findById(bookDto.getGenreId());
 

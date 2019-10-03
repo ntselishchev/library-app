@@ -4,8 +4,10 @@ import com.ntselishchev.libraryapp.domain.Author;
 import com.ntselishchev.libraryapp.domain.Book;
 import com.ntselishchev.libraryapp.domain.Genre;
 import com.ntselishchev.libraryapp.dto.BookDTO;
-import com.ntselishchev.libraryapp.service.LibraryService;
+import com.ntselishchev.libraryapp.service.IntegrationGateway;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.PollableChannel;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,35 +16,40 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LibraryController {
 
-    private final LibraryService libraryService;
+    private final IntegrationGateway gateway;
+    private final PollableChannel outputChannel;
 
     @PostMapping("/books")
     public void createBook(@RequestBody BookDTO bookDto) {
-        libraryService.addBook(bookDto);
+        gateway.process(MessageBuilder.withPayload(bookDto).setHeader("operation","addBook").build());
     }
 
     @GetMapping({"/", "books"})
     public List<Book> getBooks() {
-        return libraryService.getBooks();
+        gateway.process(MessageBuilder.withPayload("empty").setHeader("operation","getBooks").build());
+        return (List<Book>) outputChannel.receive().getPayload();
     }
 
     @DeleteMapping("/books/{id}")
     public void deleteBook(@PathVariable("id") String id) {
-        libraryService.deleteBook(id);
+        gateway.process(MessageBuilder.withPayload(id).setHeader("operation","deleteBook").build());
     }
 
     @PutMapping("/books/{id}")
     public void updateBook(@PathVariable String id, @RequestBody BookDTO bookDTO) {
-        libraryService.updateBook(id, bookDTO);
+        bookDTO.setId(id);
+        gateway.process(MessageBuilder.withPayload(bookDTO).setHeader("operation","updateBook").build());
     }
 
     @GetMapping("/genres")
     public List<Genre> getGenres() {
-        return libraryService.getGenres();
+        gateway.process(MessageBuilder.withPayload("empty").setHeader("operation","getGenres").build());
+        return (List<Genre>) outputChannel.receive().getPayload();
     }
 
     @GetMapping("/authors")
     public List<Author> getAuthors() {
-        return libraryService.getAuthors();
+        gateway.process(MessageBuilder.withPayload("empty").setHeader("operation","getAuthors").build());
+        return (List<Author>) outputChannel.receive().getPayload();
     }
 }
