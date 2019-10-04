@@ -7,7 +7,6 @@ import com.ntselishchev.libraryapp.dto.BookDTO;
 import com.ntselishchev.libraryapp.service.IntegrationGateway;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.PollableChannel;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,35 +20,35 @@ public class LibraryController {
 
     @PostMapping("/books")
     public void createBook(@RequestBody BookDTO bookDto) {
-        gateway.process(MessageBuilder.withPayload(bookDto).setHeader("operation","addBook").build());
+        gateway.process(bookDto,"addBook");
     }
 
     @GetMapping({"/", "books"})
     public List<Book> getBooks() {
-        gateway.process(MessageBuilder.withPayload("empty").setHeader("operation","getBooks").build());
+        gateway.process("empty","getBooks");
         return (List<Book>) outputChannel.receive().getPayload();
     }
 
     @DeleteMapping("/books/{id}")
     public void deleteBook(@PathVariable("id") String id) {
-        gateway.process(MessageBuilder.withPayload(id).setHeader("operation","deleteBook").build());
+        gateway.process(id,"deleteBook");
     }
 
     @PutMapping("/books/{id}")
     public void updateBook(@PathVariable String id, @RequestBody BookDTO bookDTO) {
         bookDTO.setId(id);
-        gateway.process(MessageBuilder.withPayload(bookDTO).setHeader("operation","updateBook").build());
+        gateway.process(bookDTO,"updateBook");
     }
 
     @GetMapping("/genres")
     public List<Genre> getGenres() {
-        gateway.process(MessageBuilder.withPayload("empty").setHeader("operation","getGenres").build());
+        gateway.process("empty","getGenres");
         return (List<Genre>) outputChannel.receive().getPayload();
     }
 
     @GetMapping("/authors")
     public List<Author> getAuthors() {
-        gateway.process(MessageBuilder.withPayload("empty").setHeader("operation","getAuthors").build());
+        gateway.process("empty","getAuthors");
         return (List<Author>) outputChannel.receive().getPayload();
     }
 }
