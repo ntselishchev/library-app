@@ -13,7 +13,7 @@ public interface LibraryService {
 
     void deleteBook(String id);
 
-    void updateBook(String id, BookDTO bookDto);
+    void updateBook(BookDTO bookDto);
 
     List<Author> getAuthors();
 

@@ -4,8 +4,9 @@ import com.ntselishchev.libraryapp.domain.Author;
 import com.ntselishchev.libraryapp.domain.Book;
 import com.ntselishchev.libraryapp.domain.Genre;
 import com.ntselishchev.libraryapp.dto.BookDTO;
-import com.ntselishchev.libraryapp.service.LibraryService;
+import com.ntselishchev.libraryapp.service.IntegrationGateway;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.PollableChannel;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,35 +15,40 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LibraryController {
 
-    private final LibraryService libraryService;
+    private final IntegrationGateway gateway;
+    private final PollableChannel outputChannel;
 
     @PostMapping("/books")
     public void createBook(@RequestBody BookDTO bookDto) {
-        libraryService.addBook(bookDto);
+        gateway.process(bookDto,"addBook");
     }
 
     @GetMapping({"/", "books"})
     public List<Book> getBooks() {
-        return libraryService.getBooks();
+        gateway.process("empty","getBooks");
+        return (List<Book>) outputChannel.receive().getPayload();
     }
 
     @DeleteMapping("/books/{id}")
     public void deleteBook(@PathVariable("id") String id) {
-        libraryService.deleteBook(id);
+        gateway.process(id,"deleteBook");
     }
 
     @PutMapping("/books/{id}")
     public void updateBook(@PathVariable String id, @RequestBody BookDTO bookDTO) {
-        libraryService.updateBook(id, bookDTO);
+        bookDTO.setId(id);
+        gateway.process(bookDTO,"updateBook");
     }
 
     @GetMapping("/genres")
     public List<Genre> getGenres() {
-        return libraryService.getGenres();
+        gateway.process("empty","getGenres");
+        return (List<Genre>) outputChannel.receive().getPayload();
     }
 
     @GetMapping("/authors")
     public List<Author> getAuthors() {
-        return libraryService.getAuthors();
+        gateway.process("empty","getAuthors");
+        return (List<Author>) outputChannel.receive().getPayload();
     }
 }
