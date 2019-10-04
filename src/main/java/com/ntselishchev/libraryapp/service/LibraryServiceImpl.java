@@ -7,6 +7,7 @@ import com.ntselishchev.libraryapp.domain.Author;
 import com.ntselishchev.libraryapp.domain.Book;
 import com.ntselishchev.libraryapp.domain.Genre;
 import com.ntselishchev.libraryapp.dto.BookDTO;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +23,7 @@ public class LibraryServiceImpl implements LibraryService {
     private final BookDao bookDao;
     private final AuthorDao authorDao;
     private final GenreDao genreDao;
+    private final MeterRegistry metric;
 
     public void addBook(BookDTO bookDto) {
         Optional<Author> author = authorDao.findById(bookDto.getAuthorId());
@@ -31,11 +33,13 @@ public class LibraryServiceImpl implements LibraryService {
                 genre.ifPresent(g -> {
                     Book newBook = new Book(bookDto.getTitle(), a, g);
                     bookDao.save(newBook);
+                    metric.counter("books.created").increment();
         }));
     }
 
     public void deleteBook(String id) {
         bookDao.deleteById(id);
+        metric.counter("books.deleted").increment();
     }
 
     public void updateBook(BookDTO bookDto) {
@@ -50,6 +54,7 @@ public class LibraryServiceImpl implements LibraryService {
                     b.setGenre(g);
                     b.setTitle(bookDto.getTitle());
                     bookDao.save(b);
+                    metric.counter("books.updated").increment();
                 })
             )
         );
