@@ -1,0 +1,28 @@
+version: '3.3'
+services:
+  lib-app:
+    build: .
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_PORT: 27988
+      MONGO_HOST: db
+      MONGO_DB: user_db
+      MONGO_AUTH_DB: admin
+  db:
+    image: mongo
+    command: mongod --port 27988
+    volumes:
+      - db-data:/var/lib/mongo/data
+    environment:
+      MONGODB_USER: root
+      MONGODB_DATABASE: user_db
+      MONGODB_PASS: example
+    ports:
+      - 27988:27988
+volumes:
+  db-data:
