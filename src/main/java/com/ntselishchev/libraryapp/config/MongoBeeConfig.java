@@ -14,10 +14,14 @@ public class MongoBeeConfig {
 
     @Bean
     public Mongobee mongobee(){
-        Mongobee runner = new Mongobee("mongodb://" +
+        Mongobee runner = new Mongobee(
+                "mongodb://" +
+                props.getUsername() + ":" +
+                props.getPassword() + "@" +
                 props.getHost() + ":" +
                 props.getPort() + "/" +
-                props.getDatabase());
+                props.getAuthenticationDatabase()
+        );
         runner.setDbName(props.getDatabase());
         runner.setChangeLogsScanPackage(
                 "com.ntselishchev.libraryapp.changelogs");

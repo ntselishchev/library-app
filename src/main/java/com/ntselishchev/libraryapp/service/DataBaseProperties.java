@@ -18,5 +18,11 @@ public class DataBaseProperties {
     private String port;
     @Value("${spring.data.mongodb.database}")
     private String database;
+    @Value("${spring.data.mongodb.authentication-database}")
+    private String authenticationDatabase;
+    @Value("${spring.data.mongodb.username}")
+    private String username;
+    @Value("${spring.data.mongodb.password}")
+    private String password;
 
 }
