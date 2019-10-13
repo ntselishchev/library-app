@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration status="INFO">
+	<include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+	<appender name="SERVICE-AVAILABILITY-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/availability/availabilityLog.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<maxHistory>30</maxHistory>
+			<fileNamePattern>logs/availability/availabilityLog.%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level - %m%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="availability-data" level="INFO">
+		<appender-ref ref="SERVICE-AVAILABILITY-FILE" />
+	</logger>
+
+</Configuration>
